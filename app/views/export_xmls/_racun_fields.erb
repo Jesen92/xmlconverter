@@ -1,0 +1,20 @@
+<div class="nested-fields"%>
+  <div class="well" style="background-color: white">
+    <div class="page-header head-page">
+      <h3>Racun</h3>
+    </div>
+
+    <%= f.input :broj_izdanog_racuna %>
+    <%= f.input :datum_izdanog_racuna %>
+    <%= f.input :valuta_placanja_racuna %>
+    <%= f.input :broj_dana_kasnjenja %>
+    <%= f.input :iznos_racuna %>
+    <%= f.input :iznos_pdv %>
+    <%= f.input :placeni_iznos_racuna %>
+
+
+    <p></p>
+
+    <%= link_to_remove_association "Remove", f, class: "btn btn-danger" %>
+  </div>
+</div>

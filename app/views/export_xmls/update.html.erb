@@ -1,0 +1,79 @@
+<pre><textarea style="height: 500px; width: 100%"><?xml version="1.0" encoding="utf-8"?>
+<ObrazacOPZ verzijaSheme="1.0" xmlns="http://e-porezna.porezna-uprava.hr/sheme/zahtjevi/ObrazacOPZ/v1-0">
+  <Metapodaci xmlns="http://e-porezna.porezna-uprava.hr/sheme/Metapodaci/v2-0">
+    <Naslov dc="http://purl.org/dc/elements/1.1/title">Obrazac OPZ</Naslov>
+    <Autor dc="http://purl.org/dc/elements/1.1/creator">KORISNIK 2EP</Autor>
+    <Datum dc="http://purl.org/dc/elements/1.1/date">2015-11-23T15:02:51</Datum>
+    <Format dc="http://purl.org/dc/elements/1.1/format">text/xml</Format>
+    <Jezik dc="http://purl.org/dc/elements/1.1/language">hr-HR</Jezik>
+    <Identifikator dc="http://purl.org/dc/elements/1.1/identifier">0577ee9b-0a03-4719-b308-016fd70d4cb2</Identifikator>
+    <Uskladjenost dc="http://purl.org/dc/terms/conformsTo">ObrazacOPZ-v1-0</Uskladjenost>
+    <Tip dc="http://purl.org/dc/elements/1.1/type">Elektronički obrazac</Tip>
+    <Adresant>Ministarstvo Financija, Porezna uprava, Zagreb</Adresant>
+  </Metapodaci>
+  <Zaglavlje>
+    <Razdoblje>
+      <DatumOd><%= @params["datum_od(1i)"]+"-"+@params["datum_od(2i)"]+"-"+@params["datum_od(3i)"] %></DatumOd>
+      <DatumDo><%= @params["datum_do(1i)"]+"-"+@params["datum_do(2i)"]+"-"+@params["datum_do(3i)"] %></DatumDo>
+    </Razdoblje>
+    <PorezniObveznik>
+      <OIB><%= @params[:oib] %></OIB>
+      <Naziv><%= @params[:naziv] %></Naziv>
+      <Adresa>
+        <Mjesto><%= @params[:mjesto] %></Mjesto>
+        <Ulica><%= @params[:ulica] %></Ulica>
+        <Broj><%= @params[:broj] %></Broj>
+      </Adresa>
+      <Email><%= @params[:email] %></Email>
+    </PorezniObveznik>
+    <IzvjesceSastavio>
+      <Ime><%= @params[:sastavio_ime] %></Ime>
+      <Prezime><%= @params[:sastavio_prezime] %></Prezime>
+      <Telefon><%= @params[:sastavio_tel] %></Telefon>
+      <Fax>+<%= @params[:sastavio_fax] %></Fax>
+      <Email><%= @params[:sastavio_email] %></Email>
+    </IzvjesceSastavio>
+    <NaDan><%= @params["na_dan(1i)"]+"-"+@params["na_dan(2i)"]+"-"+@params["na_dan(3i)"] %></NaDan>
+    <NisuNaplaceniDo><%= @params["nisu_naplaceni_do(1i)"]+"-"+@params["nisu_naplaceni_do(2i)"]+"-"+@params["nisu_naplaceni_do(3i)"] %></NisuNaplaceniDo>
+  </Zaglavlje>
+  <Tijelo>
+    <Kupci><% @rb = 0 %>
+      <% @kupac.each do |kupac| %>
+      <Kupac>
+        <K1><%= @rb += 1 %></K1>
+        <K2><%= kupac["oznaka_poreznog_broja"] %></K2>
+        <K3><%= kupac["porezni_broj"] %></K3>
+        <K4><%= kupac["naziv_kupca"] %></K4>
+        <Racuni><% @rb_racuna = 0 %><% @iznos_racuna = 0 %><% @iznos_pdva = 0 %><% @ukupan_iznos_pdv = 0 %><% @placeni_iznos = 0 %><% @neplaceni_iznos = 0 %>
+          <% kupac["racuns_attributes"].values.each do |racun| %>
+          <Racun><% @iznos_racuna += racun["iznos_racuna"].to_f.round(2) %><% @iznos_pdva += racun["iznos_pdv"].to_f.round(2) %><% @placeni_iznos += racun["placeni_iznos_racuna"].to_f.round(2) %><% @neplaceni_iznos += (racun["iznos_racuna"].to_f.round(2)+racun["iznos_pdv"].to_f.round(2)) - racun["placeni_iznos_racuna"].to_f.round(2) %><% @placeni_iznos += racun["placeni_iznos_racuna"].to_f.round(2) %><% @ukupan_iznos_pdv = racun["iznos_racuna"].to_f.round(2)+racun["iznos_pdv"].to_f.round(2) %>
+            <R1><%= @rb_racuna +=1 %></R1>
+            <R2><%= racun["broj_izdanog_racuna"] %></R2>
+            <R3><%= racun["datum_izdanog_racuna(1i)"]+"-"+racun["datum_izdanog_racuna(2i)"]+"-"+racun["datum_izdanog_racuna(3i)"] %></R3>
+            <R4><%= racun["valuta_placanja_racuna(1i)"]+"-"+racun["valuta_placanja_racuna(2i)"]+"-"+racun["valuta_placanja_racuna(3i)"] %></R4>
+            <R5><%= racun["broj_dana_kasnjenja"] %></R5>
+            <R6><%= number_to_currency(racun["iznos_racuna"], unit: "") %></R6>
+            <R7><%= number_to_currency(racun["iznos_pdv"], unit: "") %></R7>
+            <R8><%= number_to_currency(racun["iznos_racuna"].to_f+racun["iznos_pdv"].to_f,unit: "") %></R8>
+            <R9><%= number_to_currency(racun["placeni_iznos_racuna"], unit: "") %></R9>
+            <R10><%= number_to_currency((racun["iznos_racuna"].to_f+racun["iznos_pdv"].to_f) - racun["placeni_iznos_racuna"].to_f,unit: "", separator: ".") %></R10>
+          </Racun><% @ukupan_iznos_racuna_obrasca += @iznos_racuna %><% @ukupan_iznos_pdv_obrasca += @iznos_pdva %><% @ukupan_iznos_racuna_s_pdv_obrasca += @ukupan_iznos_pdv %><% @ukupno_placeni_iznos += @placeni_iznos %><% @ukupno_neplaceni_iznos += @neplaceni_iznos %>
+          <% end %>
+        </Racuni>
+        <K5><%= number_to_currency(@iznos_racuna, unit: "") %></K5>
+        <K6><%= number_to_currency(@iznos_pdva, unit: "") %></K6>
+        <K7><%= number_to_currency(@ukupan_iznos_pdv, unit: "") %></K7>
+        <K8><%= number_to_currency(@placeni_iznos, unit: "") %></K8>
+        <K9><%= number_to_currency(@neplaceni_iznos, unit: "") %></K9>
+      </Kupac>
+      <% end %>
+    </Kupci>
+    <UkupanIznosRacunaObrasca><%= number_to_currency(@ukupan_iznos_racuna_obrasca, unit: "") %></UkupanIznosRacunaObrasca>
+    <UkupanIznosPdvObrasca><%= number_to_currency(@ukupan_iznos_pdv_obrasca, unit: "") %></UkupanIznosPdvObrasca>
+    <UkupanIznosRacunaSPdvObrasca><%= number_to_currency(@ukupan_iznos_racuna_s_pdv_obrasca, unit: "") %></UkupanIznosRacunaSPdvObrasca>
+    <UkupniPlaceniIznosRacunaObrasca><%= number_to_currency(@ukupno_placeni_iznos, unit: "") %></UkupniPlaceniIznosRacunaObrasca>
+    <NeplaceniIznosRacunaObrasca><%= number_to_currency(@ukupno_neplaceni_iznos, unit: "") %></NeplaceniIznosRacunaObrasca>
+    <OPZUkupanIznosRacunaSPdv>0.00</OPZUkupanIznosRacunaSPdv>
+    <OPZUkupanIznosPdv>0.00</OPZUkupanIznosPdv>
+  </Tijelo>
+</ObrazacOPZ></textarea></pre>

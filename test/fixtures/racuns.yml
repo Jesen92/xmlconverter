@@ -1,0 +1,23 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  broj_izdanog_racuna: MyString
+  datum_izdanog_racuna: 2016-02-12
+  valuta_placanja_racuna: 2016-02-12
+  broj_dana_kasnjenja: 1
+  iznos_racuna: 9.99
+  iznos_pdv: 9.99
+  ukupan_iznos_racuna_pdv: 9.99
+  placeni_iznos_racuna: 9.99
+  neplaceni_dio_racuna: 9.99
+
+two:
+  broj_izdanog_racuna: MyString
+  datum_izdanog_racuna: 2016-02-12
+  valuta_placanja_racuna: 2016-02-12
+  broj_dana_kasnjenja: 1
+  iznos_racuna: 9.99
+  iznos_pdv: 9.99
+  ukupan_iznos_racuna_pdv: 9.99
+  placeni_iznos_racuna: 9.99
+  neplaceni_dio_racuna: 9.99

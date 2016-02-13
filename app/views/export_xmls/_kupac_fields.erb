@@ -1,0 +1,32 @@
+<div class="nested-fields" %>
+  <div class="well">
+    <div class="page-header head-page">
+      <h3>Kupac</h3>
+    </div>
+
+    <%= f.input :oznaka_poreznog_broja %>
+    <%= f.input :porezni_broj %>
+    <%= f.input :naziv_kupca %>
+
+    <div id="racuns" style="margin-top: 20px">
+      <%= f.simple_fields_for :racuns, html: {multipart: true} do |racun| %>
+          <%= render 'racun_fields', :f => racun  %>
+      <% end %>
+
+      <div class="links">
+        <div style="margin-bottom: 60px; margin-top: 30px;" >
+        <%= link_to_add_association 'Dodaj Racun', f, :racuns, class: "btn btn-info" %>
+        </div>
+      </div>
+    </div>
+
+    <p></p>
+
+
+    <div style="margin-bottom: 30px">
+
+    <%= link_to_remove_association "Remove", f, class: "btn btn-danger" %>
+
+    </div>
+  </div>
+</div>

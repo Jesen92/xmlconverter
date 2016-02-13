@@ -1,0 +1,35 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  datum_od: 2016-02-12
+  datum_do: 2016-02-12
+  oib: 1
+  naziv: MyString
+  mjesto: MyString
+  ulica: MyString
+  broj: MyString
+  email: MyString
+  sastavio_ime: MyString
+  sastavio_prezime: MyString
+  sastavio_tel: MyString
+  sastavio_fax: MyString
+  sastavio_email: MyString
+  na_dan: 2016-02-12
+  nisu_naplaceni_do: 2016-02-12
+
+two:
+  datum_od: 2016-02-12
+  datum_do: 2016-02-12
+  oib: 1
+  naziv: MyString
+  mjesto: MyString
+  ulica: MyString
+  broj: MyString
+  email: MyString
+  sastavio_ime: MyString
+  sastavio_prezime: MyString
+  sastavio_tel: MyString
+  sastavio_fax: MyString
+  sastavio_email: MyString
+  na_dan: 2016-02-12
+  nisu_naplaceni_do: 2016-02-12
