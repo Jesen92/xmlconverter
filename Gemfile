@@ -18,7 +18,11 @@ gem 'simple_form'
 gem 'bootstrap-sass', '~> 3.3.6'
 gem 'cocoon'
 
+gem 'nokogiri'
+
 gem 'rails_12factor'
+
+gem 'responders', '~> 2.0'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
@@ -31,7 +35,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
-
+gem 'simple_form'
 # Use Unicorn as the app server
 # gem 'unicorn'
 

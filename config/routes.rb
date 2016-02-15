@@ -19,7 +19,9 @@ Rails.application.routes.draw do
   # You can have the root of your site routed with "root"
    root 'export_xmls#new'
 
-  resources :export_xmls
+  resources :export_xmls do
+    put :export_myxml, on: :collection
+  end
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

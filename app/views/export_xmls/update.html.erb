@@ -56,7 +56,7 @@
             <R7><%= number_to_currency(racun["iznos_pdv"], unit: "") %></R7>
             <R8><%= number_to_currency(racun["iznos_racuna"].to_f+racun["iznos_pdv"].to_f,unit: "") %></R8>
             <R9><%= number_to_currency(racun["placeni_iznos_racuna"], unit: "") %></R9>
-            <R10><%= number_to_currency((racun["iznos_racuna"].to_f+racun["iznos_pdv"].to_f) - racun["placeni_iznos_racuna"].to_f,unit: "", separator: ".") %></R10>
+            <R10><%= number_to_currency((racun["iznos_racuna"].to_f.round(2)+racun["iznos_pdv"].to_f.round(2)) - racun["placeni_iznos_racuna"].to_f.round(2),unit: "", separator: ".") %></R10>
           </Racun><% @ukupan_iznos_racuna_obrasca += @iznos_racuna %><% @ukupan_iznos_pdv_obrasca += @iznos_pdva %><% @ukupan_iznos_racuna_s_pdv_obrasca += @ukupan_iznos_pdv %><% @ukupno_placeni_iznos += @placeni_iznos %><% @ukupno_neplaceni_iznos += @neplaceni_iznos %>
           <% end %>
         </Racuni>
@@ -66,6 +66,7 @@
         <K8><%= number_to_currency(@placeni_iznos, unit: "") %></K8>
         <K9><%= number_to_currency(@neplaceni_iznos, unit: "") %></K9>
       </Kupac>
+
       <% end %>
     </Kupci>
     <UkupanIznosRacunaObrasca><%= number_to_currency(@ukupan_iznos_racuna_obrasca, unit: "") %></UkupanIznosRacunaObrasca>

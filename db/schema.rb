@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160212162159) do
+ActiveRecord::Schema.define(version: 20160215124113) do
 
   create_table "kupacs", force: :cascade do |t|
     t.integer  "oznaka_poreznog_broja", limit: 4
@@ -20,6 +20,12 @@ ActiveRecord::Schema.define(version: 20160212162159) do
     t.datetime "created_at",                        null: false
     t.datetime "updated_at",                        null: false
     t.integer  "zaglavlje_id",          limit: 4
+  end
+
+  create_table "outputs", force: :cascade do |t|
+    t.text     "za_output",  limit: 65535
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
   end
 
   create_table "racuns", force: :cascade do |t|
