@@ -67,7 +67,7 @@ class ExportXmlsController < ApplicationController
           xml.Ime @params[:sastavio_ime]
           xml.Prezime @params[:sastavio_prezime]
           xml.Telefon @params[:sastavio_tel]
-          xml.Fax+ @params[:sastavio_fax]
+          xml.Fax @params[:sastavio_fax]
           xml.Email @params[:sastavio_email]
           }
           xml.NaDan @params["na_dan(1i)"]+"-"+@params["na_dan(2i)"]+"-"+@params["na_dan(3i)"]
