@@ -11,24 +11,25 @@
 #
 default: &default
   adapter: mysql2
-  host: localhost
+  host: sql2.freemysqlhosting.net
   port: 3306
   encoding: utf8
   pool: 5
-  username: root
-  password: root
-  socket: /Applications/MAMP/tmp/mysql/mysql.sock
+  username: sql2106938
+  password: vG9!zG8!
+  database: sql2106938
+
 
 development:
   <<: *default
-  database: ExportXml
+
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".
 # Do not set this db to the same as development or production.
 test:
   <<: *default
-  database: ExportXml
+
 
 # As with config/secrets.yml, you never want to store sensitive information,
 # like your database password, in your source code. If your source code is
@@ -51,4 +52,4 @@ test:
 #
 production:
   <<: *default
-  database: ExportXml
+
