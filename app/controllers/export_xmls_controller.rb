@@ -1,11 +1,13 @@
 class ExportXmlsController < ApplicationController
   include ActionView::Helpers::NumberHelper
+  before_filter :authenticate_user!
   respond_to :xml
 
   require 'nokogiri'
   require 'open-uri'
 
   def index
+    @values_grid = initialize_grid(Zaglavlje.all, include: [ :kupacs ], order: 'zaglavljes.created_at', order_direction: 'desc')
   end
 
   def show
@@ -19,6 +21,7 @@ class ExportXmlsController < ApplicationController
   end
 
   def edit
+    @zaglavlje = Zaglavlje.find(params[:id])
   end
 
   def update
@@ -33,6 +36,10 @@ class ExportXmlsController < ApplicationController
 
     @params = params[:zaglavlje]
     @kupac = params[:zaglavlje][:kupacs_attributes].values
+
+    if params[:subaction] != "Snimi Obrazac"
+
+    #TODO promjeni format datuma da ne bude 2015-1-1 nego 2015-01-01
 
 
     builder = Nokogiri::XML::Builder.new(:encoding => 'utf-8') do |xml|
@@ -50,8 +57,8 @@ class ExportXmlsController < ApplicationController
         }
         xml.Zaglavlje {
           xml.Razdoblje {
-            xml.DatumOd @params["datum_od(1i)"]+"-"+@params["datum_od(2i)"]+"-"+@params["datum_od(3i)"]
-            xml.DatumDo @params["datum_do(1i)"]+"-"+@params["datum_do(2i)"]+"-"+@params["datum_do(3i)"]
+            xml.DatumOd Date.new(@params["datum_od(1i)"].to_i, @params["datum_od(2i)"].to_i, @params["datum_od(3i)"].to_i)
+            xml.DatumDo Date.new(@params["datum_do(1i)"].to_i, @params["datum_do(2i)"].to_i ,@params["datum_do(3i)"].to_i)
           }
           xml.PorezniObveznik {
             xml.OIB @params[:oib]
@@ -70,8 +77,8 @@ class ExportXmlsController < ApplicationController
           xml.Fax @params[:sastavio_fax]
           xml.Email @params[:sastavio_email]
           }
-          xml.NaDan @params["na_dan(1i)"]+"-"+@params["na_dan(2i)"]+"-"+@params["na_dan(3i)"]
-          xml.NisuNaplaceniDo @params["nisu_naplaceni_do(1i)"]+"-"+@params["nisu_naplaceni_do(2i)"]+"-"+@params["nisu_naplaceni_do(3i)"]
+          xml.NaDan Date.new(@params["na_dan(1i)"].to_i, @params["na_dan(2i)"].to_i, @params["na_dan(3i)"].to_i )
+          xml.NisuNaplaceniDo Date.new(@params["nisu_naplaceni_do(1i)"].to_i, @params["nisu_naplaceni_do(2i)"].to_i, @params["nisu_naplaceni_do(3i)"].to_i)
         }
         xml.Tijelo {
           @rb = 0
@@ -99,8 +106,8 @@ class ExportXmlsController < ApplicationController
                     @ukupan_iznos_pdv = racun["iznos_racuna"].to_f.round(2)+racun["iznos_pdv"].to_f.round(2)
                     xml.R1 @rb_racuna +=1
                     xml.R2 racun["broj_izdanog_racuna"]
-                    xml.R3 racun["datum_izdanog_racuna(1i)"]+"-"+racun["datum_izdanog_racuna(2i)"]+"-"+racun["datum_izdanog_racuna(3i)"]
-                    xml.R4 racun["valuta_placanja_racuna(1i)"]+"-"+racun["valuta_placanja_racuna(2i)"]+"-"+racun["valuta_placanja_racuna(3i)"]
+                    xml.R3 Date.new(racun["datum_izdanog_racuna(1i)"].to_i, racun["datum_izdanog_racuna(2i)"].to_i, racun["datum_izdanog_racuna(3i)"].to_i)
+                    xml.R4 Date.new(racun["valuta_placanja_racuna(1i)"].to_i, racun["valuta_placanja_racuna(2i)"].to_i, racun["valuta_placanja_racuna(3i)"].to_i)
                     xml.R5 racun["broj_dana_kasnjenja"]
                     r6 = number_to_currency(racun["iznos_racuna"], unit: "")
                     xml.R6 r6
@@ -140,6 +147,18 @@ class ExportXmlsController < ApplicationController
 
     puts builder.to_xml
 
+    else
+
+        @obrazac = Zaglavlje.new(project_params)
+
+
+        @obrazac.save
+
+        flash[:notice] = "Obrazac je snimljen!"
+
+      redirect_to export_xmls_index_path
+    end
+
 
   end
 
@@ -154,7 +173,9 @@ class ExportXmlsController < ApplicationController
   private
 
   def project_params
-    params.require(:zaglavlje).permit(:name, :description, kupac_attributes: [:id, :_destroy])
+    params.require(:zaglavlje).permit( :created_at, :updated_at,:oib, :naziv, :mjesto, :ulica, :broj, :email, :sastavio_ime, :sastavio_prezime, :sastavio_email ,:description, :datum_od, :datum_do, :na_dan, :nisu_naplaceni_do,
+                                       kupacs_attributes: [ :oznaka_poreznog_broja, :porezni_broj, :naziv_kupca, :zaglavlje_id, :creted_at, :updated_at ,:_destroy,
+                                       racuns_attributes: [:created_at, :updated_at, :iznos_racuna, :iznos_pdv, :placeni_iznos_racuna ,:kupac_id, :broj_izdanog_racuna, :broj_dana_kasnjenja, :datum_izdanog_racuna, :valuta_placanja_racuna]])
   end
 
 end

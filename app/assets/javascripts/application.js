@@ -12,9 +12,12 @@
 //
 
 //= require jquery
-//= require jquery
+//= require jquery_ujs
+//= require jquery-ui
 //= require bootstrap-sprockets
 //= require jquery_ujs
 //= require turbolinks
+//= require wice_grid
 //= require_tree .
 //= require cocoon
+

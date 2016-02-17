@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+
   get 'export_xmls/index'
 
   get 'export_xmls/show'
@@ -17,11 +18,24 @@ Rails.application.routes.draw do
   # See how all your routes lay out with "rake routes".
 
   # You can have the root of your site routed with "root"
-   root 'export_xmls#new'
+  root :to => 'export_xmls#index'
+
+  devise_for :users, controllers: {sessions: 'users/sessions', registrations: 'users/registrations'}
+
+  devise_scope :user do
+    get "login", to: "devise/sessions#new"
+    authenticated :user do
+      root :to => 'export_xmls#index', as: :authenticated_root
+    end
+    unauthenticated :user do
+      root :to => 'users/sessions#new', as: :unauthenticated_root
+    end
 
   resources :export_xmls do
     put :export_myxml, on: :collection
   end
+
+
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'
@@ -71,4 +85,5 @@ Rails.application.routes.draw do
   #     # (app/controllers/admin/products_controller.rb)
   #     resources :products
   #   end
+    end
 end

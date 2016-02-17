@@ -1,4 +1,4 @@
-<div class="container-fluid" style="margin: 35px">
+
 
   <div class="page-header head-page">
     <h1>Unesite podatke za XML ispis</h1>
@@ -52,7 +52,6 @@
 
       </div>
 
-      <%= f.button :submit, "Download XML", class:"btn btn-success" %>
+     <%= f.button :submit, name:"subaction" , value: "Snimi Obrazac", class: "btn btn-success" %> <%= link_to "Prekid unosa", export_xmls_index_path, class: "btn btn-danger", data: { confirm: 'Jeste li sigurni da želite prekid unosa?' } %> <%= f.button :submit, "Download XML", class:"btn btn-primary pull-right" %>
 
-<% end %>
-</div>
+  <% end %>

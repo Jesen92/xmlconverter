@@ -1,0 +1,35 @@
+<%= grid(@values_grid, show_filters: :always) do |g|
+
+  g.column name: 'Id', attribute: 'id', filter: false do |t|
+    t.id
+  end
+
+  g.column name: 'Naziv', attribute: 'naziv' do |t|
+    t.naziv
+  end
+
+  g.column name: 'Sastavio', attribute: 'sastavio_ime', filter: false do |t|
+    t.sastavio_ime+" "+t.sastavio_prezime
+  end
+
+  g.column name: 'Na dan', attribute: 'na_dan', :filter => :jquery_datepicker do |t|
+    t.na_dan.strftime("%d.%m.%Y.")
+  end
+
+  g.column name: 'Kupci', attribute: 'naziv_kupca', custom_filter: :auto, :assoc => :kupacs do |t|
+    if !t.kupacs.empty?
+      t.kupacs.collect{|kupac| kupac.naziv_kupca}.to_sentence(two_words_connector:", " ,last_word_connector: ", ")
+    else
+      "Nema kupca!"
+    end
+  end
+
+  g.column name: 'Kreirano', attribute: 'created_at', :filter => :jquery_datepicker do |t|
+    t.created_at.strftime("%d.%m.%Y. %H:%M")
+  end
+
+  g.column do |t|
+    link_to("Uredi", export_xmls_edit_path(id: t.id), :method => :get)
+  end
+
+  end -%>

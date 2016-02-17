@@ -18,9 +18,16 @@ gem 'simple_form'
 gem 'bootstrap-sass', '~> 3.3.6'
 gem 'cocoon'
 
+gem 'jquery-ui-rails'
+
+gem 'devise'
+
 gem 'nokogiri'
 
 gem 'rails_12factor'
+
+gem "wice_grid", '3.6.0.pre4'
+gem 'font-awesome-sass',  '~> 4.3'
 
 gem 'responders', '~> 2.0'
 
@@ -50,6 +57,7 @@ end
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> in views
   gem 'web-console', '~> 2.0'
+  gem "better_errors"
 
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'

@@ -1,2 +1,8 @@
-<h1>ExportXmls#index</h1>
-<p>Find me in app/views/export_xmls/index.html.erb</p>
+
+  <%= link_to "Novi Obrazac", export_xmls_new_path, class: "btn btn-success" %> <%= link_to "Sign out", destroy_user_session_path, class: "btn btn-danger pull-right",  :method => :delete %>
+  <div class="page-header head-page">
+    <h1>Obrasci</h1>
+  </div>
+
+  <%= render partial: 'export_xmls/values_grid' %>
+

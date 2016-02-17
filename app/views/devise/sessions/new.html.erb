@@ -1,0 +1,19 @@
+<%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+
+
+    <div class="form__field">
+      <label class="fontawesome-user" for="login__username"><span class="hidden">Username</span></label>
+      <%= f.email_field :email, autofocus: true, :id => "login__username", :class => "form__input", :placeholder => "e-mail", :type => "text" %>
+    </div>
+
+
+    <div class="form__field">
+      <label class="fontawesome-lock" for="login__password"><span class="hidden">Password</span></label>
+      <%= f.password_field :password, autocomplete: "off", :id => "login__password", :class => "form__input", :placeholder => "Password", :type => "password" %>
+    </div>
+
+
+    <div class="actions">
+      <%= f.submit "Sign in" %>
+    </div>
+<% end %>
