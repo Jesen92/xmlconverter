@@ -32,4 +32,8 @@
     link_to("Uredi", export_xmls_edit_path(id: t.id), :method => :get)
   end
 
+  g.column do |t|
+    link_to('Izbriši', export_xml_path(t.id), method: :delete, data: { confirm: 'Jeste li sigurni?' })
+  end
+
   end -%>

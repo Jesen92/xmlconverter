@@ -163,6 +163,13 @@ class ExportXmlsController < ApplicationController
   end
 
   def destroy
+    @color = Zaglavlje.find(params[:id])
+
+    @color.destroy
+
+    flash[:notice] = "Obrazac je izbrisan!"
+
+    redirect_to export_xmls_index_path
   end
 
 
