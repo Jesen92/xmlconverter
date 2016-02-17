@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="4b63a8e4-740f-42cc-b898-c73a49b05d69" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/application-6a4a6661757769ecf1d9a889e5563cd63caaf8d8399cea034e05befb70900579.css" afterPath="$PROJECT_DIR$/public/assets/application-6a4a6661757769ecf1d9a889e5563cd63caaf8d8399cea034e05befb70900579.css" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/public/assets/login-0c187fcbe841655a0b152257b90f6f5ac009ea6689a66ebc990e8e6974c5c56a.css" afterPath="$PROJECT_DIR$/public/assets/login-0c187fcbe841655a0b152257b90f6f5ac009ea6689a66ebc990e8e6974c5c56a.css" />
     </list>
     <ignored path="untitled1.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -743,7 +741,13 @@
       <option name="project" value="LOCAL" />
       <updated>1455720423460</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="heroku">
+      <created>1455720727792</created>
+      <option name="number" value="00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1455720727792</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TodoView">
