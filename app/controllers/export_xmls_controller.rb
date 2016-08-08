@@ -40,25 +40,26 @@ class ExportXmlsController < ApplicationController
     if params[:subaction] != "Snimi Obrazac"
 
     #TODO promjeni format datuma da ne bude 2015-1-1 nego 2015-01-01
-
+    #  number_to_currency(1234567890.50, unit: "R$", separator: ",", delimiter: "")
+    # => R$1234567890,50
 
     builder = Nokogiri::XML::Builder.new(:encoding => 'utf-8') do |xml|
       xml.ObrazacOPZ('verzijaSheme' => "1.0", 'xmlns' => "http://e-porezna.porezna-uprava.hr/sheme/zahtjevi/ObrazacOPZ/v1-0") {
         xml.Metapodaci('xmlns' => "http://e-porezna.porezna-uprava.hr/sheme/Metapodaci/v2-0") {
           xml.Naslov('dc' => "http://purl.org/dc/elements/1.1/title") { xml.text "Obrazac OPZ"}
           xml.Autor( 'dc' => "http://purl.org/dc/elements/1.1/creator") { xml.text "KORISNIK 2EP" }
-          xml.Datum( 'dc' => "http://purl.org/dc/elements/1.1/date") {xml.text "2015-11-23T15:02:51"}
+          xml.Datum( 'dc' => "http://purl.org/dc/elements/1.1/date") {xml.text DateTime.now.strftime("%Y-%m-%dT%H:%M").to_s}
           xml.Format( 'dc' => "http://purl.org/dc/elements/1.1/format") {xml.text "text/xml"}
           xml.Jezik( 'dc'=>"http://purl.org/dc/elements/1.1/language"){ xml.text "hr-HR"}
-          xml.Identifikator( 'dc'=>"http://purl.org/dc/elements/1.1/identifier") { xml.text "0577ee9b-0a03-4719-b308-016fd70d4cb2"}
+          xml.Identifikator( 'dc'=>"http://purl.org/dc/elements/1.1/identifier") { xml.text SecureRandom.uuid.to_s}
           xml.Uskladjenost( 'dc'=>"http://purl.org/dc/terms/conformsTo") { xml.text "ObrazacOPZ-v1-0"}
           xml.Tip( 'dc'=>"http://purl.org/dc/elements/1.1/type"){ xml.text "Elektronički obrazac"}
           xml.Adresant "Ministarstvo Financija, Porezna uprava, Zagreb"
         }
         xml.Zaglavlje {
           xml.Razdoblje {
-            xml.DatumOd Date.new(@params["datum_od(1i)"].to_i, @params["datum_od(2i)"].to_i, @params["datum_od(3i)"].to_i)
-            xml.DatumDo Date.new(@params["datum_do(1i)"].to_i, @params["datum_do(2i)"].to_i ,@params["datum_do(3i)"].to_i)
+            xml.DatumOd Date.new(@params["datum_od(1i)"].to_i, @params["datum_od(2i)"].to_i, @params["datum_od(3i)"].to_i).strftime("%Y-%m-%d")
+            xml.DatumDo Date.new(@params["datum_do(1i)"].to_i, @params["datum_do(2i)"].to_i ,@params["datum_do(3i)"].to_i).strftime("%Y-%m-%d")
           }
           xml.PorezniObveznik {
             xml.OIB @params[:oib]
@@ -78,7 +79,8 @@ class ExportXmlsController < ApplicationController
           xml.Email @params[:sastavio_email]
           }
           xml.NaDan Date.new(@params["na_dan(1i)"].to_i, @params["na_dan(2i)"].to_i, @params["na_dan(3i)"].to_i )
-          xml.NisuNaplaceniDo Date.new(@params["nisu_naplaceni_do(1i)"].to_i, @params["nisu_naplaceni_do(2i)"].to_i, @params["nisu_naplaceni_do(3i)"].to_i)
+          @nisu_naplaceni_do = Date.new(@params["nisu_naplaceni_do(1i)"].to_i, @params["nisu_naplaceni_do(2i)"].to_i, @params["nisu_naplaceni_do(3i)"].to_i)
+          xml.NisuNaplaceniDo @nisu_naplaceni_do #Date.new(@params["nisu_naplaceni_do(1i)"].to_i, @params["nisu_naplaceni_do(2i)"].to_i, @params["nisu_naplaceni_do(3i)"].to_i)
         }
         xml.Tijelo {
           @rb = 0
@@ -98,23 +100,23 @@ class ExportXmlsController < ApplicationController
                 @neplaceni_iznos = 0
                 kupac["racuns_attributes"].values.each do |racun|
                   xml.Racun {
-                    @iznos_racuna += racun["iznos_racuna"].to_f.round(2)
-                    @iznos_pdva += racun["iznos_pdv"].to_f.round(2)
-                    @placeni_iznos += racun["placeni_iznos_racuna"].to_f.round(2)
-                    @neplaceni_iznos += (racun["iznos_racuna"].to_f.round(2)+racun["iznos_pdv"].to_f.round(2)) - racun["placeni_iznos_racuna"].to_f.round(2)
-                    @placeni_iznos += racun["placeni_iznos_racuna"].to_f.round(2)
-                    @ukupan_iznos_pdv = racun["iznos_racuna"].to_f.round(2)+racun["iznos_pdv"].to_f.round(2)
+                    @iznos_racuna += racun["iznos_racuna"].gsub(",", ".").to_f.round(2)
+                    @iznos_pdva += racun["iznos_pdv"].gsub(",", ".").to_f.round(2)
+                    @placeni_iznos += racun["placeni_iznos_racuna"].gsub(",", ".").to_f.round(2)
+                    @neplaceni_iznos += (racun["iznos_racuna"].gsub(",", ".").to_f.round(2)+racun["iznos_pdv"].gsub(",", ".").to_f.round(2)) - racun["placeni_iznos_racuna"].to_f.round(2)
+                    @ukupan_iznos_pdv = racun["iznos_racuna"].gsub(",", ".").to_f.round(2)+racun["iznos_pdv"].gsub(",", ".").to_f.round(2)
                     xml.R1 @rb_racuna +=1
                     xml.R2 racun["broj_izdanog_racuna"]
                     xml.R3 Date.new(racun["datum_izdanog_racuna(1i)"].to_i, racun["datum_izdanog_racuna(2i)"].to_i, racun["datum_izdanog_racuna(3i)"].to_i)
-                    xml.R4 Date.new(racun["valuta_placanja_racuna(1i)"].to_i, racun["valuta_placanja_racuna(2i)"].to_i, racun["valuta_placanja_racuna(3i)"].to_i)
-                    xml.R5 racun["broj_dana_kasnjenja"]
-                    r6 = number_to_currency(racun["iznos_racuna"], unit: "")
+                    valuta_placanja_racuna = Date.new(racun["datum_izdanog_racuna(1i)"].to_i, racun["datum_izdanog_racuna(2i)"].to_i, racun["datum_izdanog_racuna(3i)"].to_i)
+                    xml.R4 valuta_placanja_racuna #Date.new(racun["valuta_placanja_racuna(1i)"].to_i, racun["valuta_placanja_racuna(2i)"].to_i, racun["valuta_placanja_racuna(3i)"].to_i)
+                    xml.R5 (@nisu_naplaceni_do - valuta_placanja_racuna).to_i #racun["broj_dana_kasnjenja"]
+                    r6 = number_to_currency(racun["iznos_racuna"], unit: "", separator: ".", delimiter: "")
                     xml.R6 r6
-                    xml.R7 number_to_currency(racun["iznos_pdv"], unit: "")
-                    xml.R8 number_to_currency(racun["iznos_racuna"].to_f+racun["iznos_pdv"].to_f,unit: "")
-                    xml.R9 number_to_currency(racun["placeni_iznos_racuna"], unit: "")
-                    xml.R10 number_to_currency((racun["iznos_racuna"].to_f.round(2)+racun["iznos_pdv"].to_f.round(2)) - racun["placeni_iznos_racuna"].to_f.round(2),unit: "", separator: ".")
+                    xml.R7 number_to_currency(racun["iznos_pdv"].gsub(",", "."), unit: "", separator: ".", delimiter: "")
+                    xml.R8 number_to_currency(racun["iznos_racuna"].gsub(",", ".").to_f+racun["iznos_pdv"].gsub(",", ".").to_f,unit: "", separator: ".", delimiter: "")
+                    xml.R9 number_to_currency(racun["placeni_iznos_racuna"].gsub(",", "."), unit: "")
+                    xml.R10 number_to_currency((racun["iznos_racuna"].gsub(",", ".").to_f.round(2)+racun["iznos_pdv"].gsub(",", ".").to_f.round(2)) - racun["placeni_iznos_racuna"].gsub(",", ".").to_f.round(2),unit: "", separator: ".", delimiter: "")
                   }
                   @ukupan_iznos_racuna_obrasca += @iznos_racuna
                   @ukupan_iznos_pdv_obrasca += @iznos_pdva
@@ -123,21 +125,21 @@ class ExportXmlsController < ApplicationController
                   @ukupno_neplaceni_iznos += @neplaceni_iznos
                 end
               }
-              xml.K5 number_to_currency(@iznos_racuna, unit: "")
-              xml.K6 number_to_currency(@iznos_pdva, unit: "")
-              xml.K7 number_to_currency(@ukupan_iznos_pdv, unit: "")
-              xml.K8 number_to_currency(@placeni_iznos, unit: "")
-              xml.K9 number_to_currency(@neplaceni_iznos, unit: "")
+              xml.K5 number_to_currency(@iznos_racuna, unit: "", separator: ".", delimiter: "")
+              xml.K6 number_to_currency(@iznos_pdva, unit: "", separator: ".", delimiter: "")
+              xml.K7 number_to_currency(@ukupan_iznos_pdv, unit: "", separator: ".", delimiter: "")
+              xml.K8 number_to_currency(@placeni_iznos, unit: "", separator: ".", delimiter: "")
+              xml.K9 number_to_currency(@neplaceni_iznos, unit: "", separator: ".", delimiter: "")
             }
           end
           }
-          xml.UkupanIznosRacunaObrasca number_to_currency(@ukupan_iznos_racuna_obrasca, unit: "")
-          xml.UkupanIznosPdvObrasca number_to_currency(@ukupan_iznos_pdv_obrasca, unit: "")
-          xml.UkupanIznosRacunaSPdvObrasca number_to_currency(@ukupan_iznos_racuna_s_pdv_obrasca, unit: "")
-          xml.UkupniPlaceniIznosRacunaObrasca number_to_currency(@ukupno_placeni_iznos, unit: "")
-          xml.NeplaceniIznosRacunaObrasca number_to_currency(@ukupno_neplaceni_iznos, unit: "")
-          xml.OPZUkupanIznosRacunaSPdv "0.00"
-          xml.OPZUkupanIznosPdv "0.00"
+          xml.UkupanIznosRacunaObrasca number_to_currency(@ukupan_iznos_racuna_obrasca, unit: "", separator: ".", delimiter: "")
+          xml.UkupanIznosPdvObrasca number_to_currency(@ukupan_iznos_pdv_obrasca, unit: "", separator: ".", delimiter: "")
+          xml.UkupanIznosRacunaSPdvObrasca number_to_currency(@ukupan_iznos_racuna_s_pdv_obrasca, unit: "", separator: ".", delimiter: "")
+          xml.UkupniPlaceniIznosRacunaObrasca number_to_currency(@ukupno_placeni_iznos, unit: "", separator: ".", delimiter: "")
+          xml.NeplaceniIznosRacunaObrasca number_to_currency(@ukupno_neplaceni_iznos, unit: "", separator: ".", delimiter: "")
+          xml.OPZUkupanIznosRacunaSPdv "0.00" #TODO upit u poreznu za što je to pošto nije pojašnjeno u dokumentaciji
+          xml.OPZUkupanIznosPdv "0.00" #TODO - \\ -
         }
       }
 
@@ -174,13 +176,13 @@ class ExportXmlsController < ApplicationController
 
 
   def export_myxml(builder)
-    send_data(builder.to_xml, filename: 'Obrazac OPS.xml')
+    send_data(builder.to_xml, filename: 'Obrazac OPZ-'+DateTime.now.strftime("%Y-%m-%d")+'.xml')
   end
 
   private
 
   def project_params
-    params.require(:zaglavlje).permit( :created_at, :updated_at,:oib, :naziv, :mjesto, :ulica, :broj, :email, :sastavio_ime, :sastavio_prezime, :sastavio_email ,:description, :datum_od, :datum_do, :na_dan, :nisu_naplaceni_do,
+    params.require(:zaglavlje).permit( :created_at, :updated_at,:oib, :naziv, :mjesto, :ulica, :broj, :email, :sastavio_ime, :sastavio_prezime, :sastavio_email, :sastavio_tel, :sastavio_fax ,:description, :datum_od, :datum_do, :na_dan, :nisu_naplaceni_do,
                                        kupacs_attributes: [ :oznaka_poreznog_broja, :porezni_broj, :naziv_kupca, :zaglavlje_id, :creted_at, :updated_at ,:_destroy,
                                        racuns_attributes: [:created_at, :updated_at, :iznos_racuna, :iznos_pdv, :placeni_iznos_racuna ,:kupac_id, :broj_izdanog_racuna, :broj_dana_kasnjenja, :datum_izdanog_racuna, :valuta_placanja_racuna]])
   end

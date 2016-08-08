@@ -11,14 +11,18 @@
 #
 default: &default
   adapter: mysql2
-  host: sql2.freemysqlhosting.net
+  #host: sql2.freemysqlhosting.net
+  #host: localhost
   port: 3306
   encoding: utf8
   pool: 5
-  username: sql2106938
-  password: vG9!zG8!
-  database: sql2106938
-
+  #username: sql2106938
+  #password: vG9!zG8!
+  #database: sql2106938
+  username: root
+  password: root
+  socket: /Applications/MAMP/tmp/mysql/mysql.sock
+  database: ExportXml
 
 development:
   <<: *default

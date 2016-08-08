@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160217131632) do
+ActiveRecord::Schema.define(version: 20160808084645) do
 
   create_table "kupacs", force: :cascade do |t|
     t.integer  "oznaka_poreznog_broja", limit: 4
@@ -32,14 +32,14 @@ ActiveRecord::Schema.define(version: 20160217131632) do
     t.string   "broj_izdanog_racuna",     limit: 255
     t.date     "datum_izdanog_racuna"
     t.date     "valuta_placanja_racuna"
-    t.integer  "broj_dana_kasnjenja",     limit: 4,                            default: 0
-    t.float    "iznos_racuna",            limit: 24
-    t.decimal  "iznos_pdv",                           precision: 10, scale: 2
-    t.decimal  "ukupan_iznos_racuna_pdv",             precision: 10, scale: 2
-    t.decimal  "placeni_iznos_racuna",                precision: 10, scale: 2
-    t.decimal  "neplaceni_dio_racuna",                precision: 10, scale: 2
-    t.datetime "created_at",                                                               null: false
-    t.datetime "updated_at",                                                               null: false
+    t.integer  "broj_dana_kasnjenja",     limit: 4
+    t.decimal  "iznos_racuna",                        precision: 10
+    t.decimal  "iznos_pdv",                           precision: 10
+    t.decimal  "ukupan_iznos_racuna_pdv",             precision: 10
+    t.decimal  "placeni_iznos_racuna",                precision: 10
+    t.decimal  "neplaceni_dio_racuna",                precision: 10
+    t.datetime "created_at",                                         null: false
+    t.datetime "updated_at",                                         null: false
     t.integer  "kupac_id",                limit: 4
   end
 
@@ -64,7 +64,6 @@ ActiveRecord::Schema.define(version: 20160217131632) do
   create_table "zaglavljes", force: :cascade do |t|
     t.date     "datum_od"
     t.date     "datum_do"
-    t.integer  "oib",               limit: 4
     t.string   "naziv",             limit: 255
     t.string   "mjesto",            limit: 255
     t.string   "ulica",             limit: 255
@@ -79,6 +78,7 @@ ActiveRecord::Schema.define(version: 20160217131632) do
     t.date     "nisu_naplaceni_do"
     t.datetime "created_at",                    null: false
     t.datetime "updated_at",                    null: false
+    t.integer  "oib",               limit: 8
   end
 
 end
