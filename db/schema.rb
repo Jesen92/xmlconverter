@@ -11,7 +11,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160808084645) do
+ActiveRecord::Schema.define(version: 20160810115935) do
+
+  create_table "file_uploads", force: :cascade do |t|
+    t.string   "document_file_name",    limit: 255
+    t.string   "document_content_type", limit: 255
+    t.integer  "document_file_size",    limit: 4
+    t.datetime "document_updated_at"
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
+  end
 
   create_table "kupacs", force: :cascade do |t|
     t.integer  "oznaka_poreznog_broja", limit: 4
@@ -41,6 +50,7 @@ ActiveRecord::Schema.define(version: 20160808084645) do
     t.datetime "created_at",                                         null: false
     t.datetime "updated_at",                                         null: false
     t.integer  "kupac_id",                limit: 4
+    t.string   "porezni_broj_kupca",      limit: 255
   end
 
   create_table "users", force: :cascade do |t|

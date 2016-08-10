@@ -14,6 +14,10 @@ Rails.application.routes.draw do
 
   get 'export_xmls/destroy'
 
+  get 'export_xmls/import' => "export_xmls#import", :as => 'import'
+
+  get 'export_xmls/import_create' => "export_xmls#import_create", :as => 'import_create'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
@@ -33,6 +37,8 @@ Rails.application.routes.draw do
 
   resources :export_xmls do
     put :export_myxml, on: :collection
+    get :import, on: :collection
+    put :import_create, on: :collection
   end
 
 

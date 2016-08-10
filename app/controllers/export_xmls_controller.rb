@@ -6,6 +6,23 @@ class ExportXmlsController < ApplicationController
   require 'nokogiri'
   require 'open-uri'
 
+  ############################################# importiranje excel tablica
+  def import
+    @document = FileUpload.new
+  end
+
+  def import_create
+
+    puts "Orginalno ime je: #{params[:file_upload][:document]}"
+
+    zaglavlje_id = Zaglavlje.import_xlsx(params[:file_upload][:document])
+
+    flash[:notice] = "XLSX tablica je uspješno uvezena!"
+
+    redirect_to export_xmls_edit_path(id: zaglavlje_id)
+  end
+  #############################################
+
   def index
     @values_grid = initialize_grid(Zaglavlje.all, include: [ :kupacs ], order: 'zaglavljes.created_at', order_direction: 'desc')
   end
@@ -115,7 +132,7 @@ class ExportXmlsController < ApplicationController
                     xml.R6 r6
                     xml.R7 number_to_currency(racun["iznos_pdv"].gsub(",", "."), unit: "", separator: ".", delimiter: "")
                     xml.R8 number_to_currency(racun["iznos_racuna"].gsub(",", ".").to_f+racun["iznos_pdv"].gsub(",", ".").to_f,unit: "", separator: ".", delimiter: "")
-                    xml.R9 number_to_currency(racun["placeni_iznos_racuna"].gsub(",", "."), unit: "")
+                    xml.R9 number_to_currency(racun["placeni_iznos_racuna"].gsub(",", "."), unit: "", separator: ".", delimiter: "")
                     xml.R10 number_to_currency((racun["iznos_racuna"].gsub(",", ".").to_f.round(2)+racun["iznos_pdv"].gsub(",", ".").to_f.round(2)) - racun["placeni_iznos_racuna"].gsub(",", ".").to_f.round(2),unit: "", separator: ".", delimiter: "")
                   }
                   @ukupan_iznos_racuna_obrasca += @iznos_racuna
@@ -153,8 +170,10 @@ class ExportXmlsController < ApplicationController
 
         @obrazac = Zaglavlje.new(project_params)
 
-
         @obrazac.save
+
+        #TODO izraditi posebnu formu za unos kupaca i izrada nove tablice "Zaglavljes_kupacs" radi optimizaranja baze
+        #Kupac.check_duplicate_values() - problem kod postavljanja id-a od racuna i problem jer sadrzi id od zaglavlja
 
         flash[:notice] = "Obrazac je snimljen!"
 
@@ -165,9 +184,9 @@ class ExportXmlsController < ApplicationController
   end
 
   def destroy
-    @color = Zaglavlje.find(params[:id])
+    @obrazac = Zaglavlje.find(params[:id])
 
-    @color.destroy
+    @obrazac.destroy
 
     flash[:notice] = "Obrazac je izbrisan!"
 
@@ -186,5 +205,7 @@ class ExportXmlsController < ApplicationController
                                        kupacs_attributes: [ :oznaka_poreznog_broja, :porezni_broj, :naziv_kupca, :zaglavlje_id, :creted_at, :updated_at ,:_destroy,
                                        racuns_attributes: [:created_at, :updated_at, :iznos_racuna, :iznos_pdv, :placeni_iznos_racuna ,:kupac_id, :broj_izdanog_racuna, :broj_dana_kasnjenja, :datum_izdanog_racuna, :valuta_placanja_racuna]])
   end
+
+
 
 end

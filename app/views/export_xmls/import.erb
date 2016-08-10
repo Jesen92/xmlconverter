@@ -1,0 +1,9 @@
+<div class="page-header head-page">
+  <h1>Uvezite XLSX tablicu</h1>
+</div>
+
+<%= simple_form_for @document, url: import_create_path, method: :put,html: {class: 'form-horizontal', multipart: true} do |form| %>
+    <%= form.input :document, as: :file %>
+
+    <%= form.submit "Uvezi", class:"btn btn-success" %>
+<% end %>

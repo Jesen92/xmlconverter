@@ -4,7 +4,9 @@
       <h3>Kupac</h3>
     </div>
 
-    <%= f.input :oznaka_poreznog_broja %>
+    <%= f.input :oznaka_poreznog_broja ,collection: ([["OIB kupca", 1], ["PDV identifikacijski broj", 2], ["Ostali porezni brojevi", 3]]), selected: ["OIB kupca", 1]%>
+
+
     <%= f.input :porezni_broj %>
     <%= f.input :naziv_kupca %>
 

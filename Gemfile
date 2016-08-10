@@ -30,6 +30,8 @@ gem 'font-awesome-sass',  '~> 4.3'
 
 gem 'responders', '~> 2.0'
 
+gem 'roo'
+
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
