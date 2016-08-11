@@ -2,8 +2,23 @@
   <h1>Uvezite XLSX tablicu</h1>
 </div>
 
+<div class="list-group">
+  <%= link_to download_pdf_path, class: "list-group-item" do %>
+    <h4 class="list-group-item-heading">Poslovna pravila OPZ-STAT-1 obrasca</h4>
+    <p class="list-group-item-text">Pravila kreiranja xml datoteke</p>
+  <% end %>
+  <%= link_to download_xlsx_path, class: "list-group-item" do %>
+      <h4 class="list-group-item-heading">OPZ-STAT-1 xlsx tablica</h4>
+      <p class="list-group-item-text">Excel tablica</p>
+  <% end %>
+  <%= link_to download_xlsx_primjer_path, class: "list-group-item" do %>
+      <h4 class="list-group-item-heading">OPZ-STAT-1 primjer xlsx tablice</h4>
+      <p class="list-group-item-text">Primjer pravilno ispunjene excel tablice</p>
+  <% end %>
+</div>
+
 <%= simple_form_for @document, url: import_create_path, method: :put,html: {class: 'form-horizontal', multipart: true} do |form| %>
     <%= form.input :document, as: :file %>
 
-    <%= form.submit "Uvezi", class:"btn btn-success" %>
+    <%= form.submit "Uvezi", class:"btn btn-success" %> <%= link_to "Prekid unosa", export_xmls_index_path, class: "btn btn-warning pull-right", data: { confirm: 'Jeste li sigurni da želite prekid unosa?' } %>
 <% end %>

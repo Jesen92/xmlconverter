@@ -11,3 +11,6 @@ Rails.application.config.assets.version = '1.0'
 # Rails.application.config.assets.precompile += %w( search.js )
 
 Rails.application.config.assets.precompile += %w( login.css )
+Rails.application.config.assets.precompile += %w( OPZ-STAT-1.pdf )
+Rails.application.config.assets.precompile += %w( Sablona_za_nenaplacena_potrazivanja.xlsx )
+Rails.application.config.assets.precompile += %w( Sablona_za_nenaplacena_potrazivanja_primjer-1.xlsx )

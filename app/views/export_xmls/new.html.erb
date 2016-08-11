@@ -52,6 +52,6 @@
 
       </div>
 
-     <%= f.button :submit, name:"subaction" , value: "Snimi Obrazac", class: "btn btn-success" %> <%= link_to "Prekid unosa", export_xmls_index_path, class: "btn btn-danger", data: { confirm: 'Jeste li sigurni da želite prekid unosa?' } %> <%= f.button :submit, "Download XML", class:"btn btn-primary pull-right" %>
+      <%= f.button :submit, "Download XML", class:"btn btn-primary" %> <%= f.button :submit, name:"subaction" , value: "Snimi Obrazac", class: "btn btn-success" %> <%= link_to "Prekid unosa", export_xmls_index_path, class: "btn btn-warning pull-right", data: { confirm: 'Jeste li sigurni da želite prekid unosa?' } %>
 
   <% end %>

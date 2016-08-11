@@ -20,3 +20,14 @@
 @import "wice_grid";
 @import "font-awesome-sprockets";
 @import "font-awesome";
+
+.RbtnMargin { margin-left: 5px; }
+
+.download_link {
+  color: blue;
+}
+
+.download_link:hover {
+  color: darkblue;
+  cursor: pointer;
+}

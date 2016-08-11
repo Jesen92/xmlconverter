@@ -56,7 +56,6 @@ class ExportXmlsController < ApplicationController
 
     if params[:subaction] != "Snimi Obrazac"
 
-    #TODO promjeni format datuma da ne bude 2015-1-1 nego 2015-01-01
     #  number_to_currency(1234567890.50, unit: "R$", separator: ",", delimiter: "")
     # => R$1234567890,50
 
@@ -196,6 +195,29 @@ class ExportXmlsController < ApplicationController
 
   def export_myxml(builder)
     send_data(builder.to_xml, filename: 'Obrazac OPZ-'+DateTime.now.strftime("%Y-%m-%d")+'.xml')
+  end
+
+  def download_pdf
+    send_file(
+        "#{Rails.root}/public/assets/OPZ-STAT-1.pdf",
+        filename: "Poslovna pravila OPZ-STAT-1 obrasca.pdf",
+        type: "application/pdf"
+    )
+  end
+
+  def download_xlsx
+    send_file(
+        "#{Rails.root}/public/assets/Sablona_za_nenaplacena_potrazivanja.xlsx",
+        filename: "Tablica OPZ-STAT-1.xlsx",
+        type: "application/xlsx"
+    )
+  end
+  def download_xlsx_primjer
+    send_file(
+        "#{Rails.root}/public/assets/Sablona_za_nenaplacena_potrazivanja_primjer-1.xlsx",
+        filename: "Tablica OPZ-STAT-1_primjer.xlsx",
+        type: "application/xlsx"
+    )
   end
 
   private
