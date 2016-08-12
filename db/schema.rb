@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(version: 20160810115935) do
   end
 
   create_table "kupacs", force: :cascade do |t|
+    t.integer  "r_b",                   limit: 4
     t.integer  "oznaka_poreznog_broja", limit: 4
     t.string   "porezni_broj",          limit: 255
     t.string   "naziv_kupca",           limit: 255
