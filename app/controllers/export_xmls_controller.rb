@@ -184,7 +184,11 @@ class ExportXmlsController < ApplicationController
 
   def destroy
     @obrazac = Zaglavlje.find(params[:id])
+    @kupci = Kupac.where(zaglavlje_id: params[:id])
+    @racuni = Racun.where(kupac_id: @kupci.ids)
 
+    @kupci.destroy_all
+    @racuni.destroy_all
     @obrazac.destroy
 
     flash[:notice] = "Obrazac je izbrisan!"

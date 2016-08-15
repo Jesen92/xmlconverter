@@ -4,10 +4,16 @@
       <h3>Kupac</h3>
     </div>
 
-    <%= f.input :oznaka_poreznog_broja ,collection: ([["OIB kupca", 1], ["PDV identifikacijski broj", 2], ["Ostali porezni brojevi", 3]]), selected: ["OIB kupca", 1]%>
+    <% if f.object.oznaka_poreznog_broja? %>
+      <%= f.input :oznaka_poreznog_broja ,collection: ([["OIB kupca", 1], ["PDV identifikacijski broj", 2], ["Ostali porezni brojevi", 3]]),
+                selected: f.object.oznaka_poreznog_broja %>
+    <% else %>
+        <%= f.input :oznaka_poreznog_broja ,collection: ([["OIB kupca", 1], ["PDV identifikacijski broj", 2], ["Ostali porezni brojevi", 3]]),
+                    selected: 1 %>
+    <% end %>
 
 
-    <%= f.input :porezni_broj %>
+        <%= f.input :porezni_broj %>
     <%= f.input :naziv_kupca %>
 
     <div id="racuns" style="margin-top: 20px">

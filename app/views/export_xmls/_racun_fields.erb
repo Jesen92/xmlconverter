@@ -8,9 +8,9 @@
     <%= f.input :datum_izdanog_racuna %>
     <%= f.input :valuta_placanja_racuna %>
     <!-- <%= f.input :broj_dana_kasnjenja %> -->
-    <%= f.input :iznos_racuna %>
-    <%= f.input :iznos_pdv %>
-    <%= f.input :placeni_iznos_racuna %>
+    <%= f.input :iznos_racuna, :input_html => {value: number_with_precision(f.object.iznos_racuna, precision: 2) } %>
+    <%= f.input :iznos_pdv, :input_html => {value: number_with_precision(f.object.iznos_pdv, precision: 2) } %>
+    <%= f.input :placeni_iznos_racuna, :input_html => {value: number_with_precision(f.object.placeni_iznos_racuna, precision: 2) } %>
 
 
     <p></p>
