@@ -4,6 +4,7 @@ class Zaglavlje < ActiveRecord::Base
 
   def self.import_xlsx(file)
     puts "usao je u import_xlsx"
+    @zaglavlje_id = 0
 
     spreadsheet = open_spreadsheet(file)
 
@@ -49,10 +50,10 @@ class Zaglavlje < ActiveRecord::Base
       article.save!
     end
 
-    @zaglavlje_id.to_s
+    return "Ispravno", @zaglavlje_id.to_s
 
-  rescue
-    return "Pogreška u listi << #{@error_log} >> Pogreška se nalazi u redu broj #{@error_red} ili u zaglavlju te liste!"
+  rescue => e
+    return "Pogreška u listi '#{@error_log}'\nPogreška se nalazi u redu broj #{@error_red} ili u zaglavlju te liste!\nError message: #{e.message}", @zaglavlje_id
   end
 
   def self.open_spreadsheet(file)

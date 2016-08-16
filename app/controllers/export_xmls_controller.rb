@@ -13,12 +13,16 @@ class ExportXmlsController < ApplicationController
 
   def import_create
 
+
     puts "Orginalno ime je: #{params[:file_upload][:document]}"
 
-    zaglavlje_id = Zaglavlje.import_xlsx(params[:file_upload][:document])
+    message, zaglavlje_id = Zaglavlje.import_xlsx(params[:file_upload][:document])
 
-    if zaglavlje_id.include? "Pogreška"
-      flash[:alert] = zaglavlje_id
+    if message.include? "Pogreška"
+      flash[:alert] = message
+      if zaglavlje_id != 0
+        error_destroy(zaglavlje_id)
+      end
       redirect_to(:back)
     else
       flash[:notice] = "XLSX tablica je uspješno uvezena!"
@@ -239,5 +243,15 @@ class ExportXmlsController < ApplicationController
   end
 
 
+
+  def error_destroy(id)
+    @obrazac = Zaglavlje.find(id)
+    @kupci = Kupac.where(zaglavlje_id: id)
+    @racuni = Racun.where(kupac_id: @kupci.ids)
+
+    @kupci.destroy_all
+    @racuni.destroy_all
+    @obrazac.destroy
+  end
 
 end
