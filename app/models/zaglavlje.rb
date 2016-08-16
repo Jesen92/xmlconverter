@@ -10,6 +10,8 @@ class Zaglavlje < ActiveRecord::Base
     zaglavlje = spreadsheet.sheet(0) #zaglavlje
     zaglavlje_header = zaglavlje.row(1)
 
+    @error_log = "Zaglavlje"
+    @error_red = "1"
     row = Hash[[zaglavlje_header, zaglavlje.row(zaglavlje.last_row)].transpose]
     article = new   #find_by_id(row["id"]) || - ako ce se mijenjati vrijednosti preko excel tablica
     article.attributes = row.to_hash.slice(*row.to_hash.keys)
@@ -20,11 +22,14 @@ class Zaglavlje < ActiveRecord::Base
     kupci = spreadsheet.sheet(1) #kupci
     kupci_header = kupci.row(1)
 
+    @error_log = "Kupci"
     (2..kupci.last_row).each do |i|
+      @error_red = i.to_s
       row = Hash[[kupci_header, kupci.row(i)].transpose]
       article = Kupac.new   #find_by_id(row["id"]) || - ako ce se mijenjati vrijednosti preko excel tablica
       article.attributes = row.to_hash.slice(*row.to_hash.keys)
       article.zaglavlje_id = @zaglavlje_id #postavljanje id-a od kreiranog zaglavlja
+
       article.save!
       @kupci[article.porezni_broj] = article.id
     end
@@ -32,7 +37,9 @@ class Zaglavlje < ActiveRecord::Base
     racuni = spreadsheet.sheet(2) #racuni
     racuni_header = racuni.row(1)
 
+    @error_log = "Racuni"
     (2..racuni.last_row).each do |i|
+      @error_red = i.to_s
       row = Hash[[racuni_header, racuni.row(i)].transpose]
       article = Racun.new   #find_by_id(row["id"]) || - ako ce se mijenjati vrijednosti preko excel tablica
       article.attributes = row.to_hash.slice(*row.to_hash.keys)
@@ -42,8 +49,10 @@ class Zaglavlje < ActiveRecord::Base
       article.save!
     end
 
-    @zaglavlje_id
+    @zaglavlje_id.to_s
 
+  rescue
+    return "Pogreška u listi << #{@error_log} >> Pogreška se nalazi u redu broj #{@error_red} ili u zaglavlju te liste!"
   end
 
   def self.open_spreadsheet(file)
@@ -55,5 +64,7 @@ class Zaglavlje < ActiveRecord::Base
       else raise "Unknown file type: #{File.extname(file)}"
     end
   end
+
+
 
 end

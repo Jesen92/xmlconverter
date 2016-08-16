@@ -17,9 +17,15 @@ class ExportXmlsController < ApplicationController
 
     zaglavlje_id = Zaglavlje.import_xlsx(params[:file_upload][:document])
 
-    flash[:notice] = "XLSX tablica je uspješno uvezena!"
+    if zaglavlje_id.include? "Pogreška"
+      flash[:alert] = zaglavlje_id
+      redirect_to(:back)
+    else
+      flash[:notice] = "XLSX tablica je uspješno uvezena!"
+      redirect_to export_xmls_edit_path(id: zaglavlje_id.to_i)
+    end
 
-    redirect_to export_xmls_edit_path(id: zaglavlje_id)
+
   end
   #############################################
 
