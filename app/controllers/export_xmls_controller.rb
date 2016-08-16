@@ -70,7 +70,7 @@ class ExportXmlsController < ApplicationController
         xml.Metapodaci('xmlns' => "http://e-porezna.porezna-uprava.hr/sheme/Metapodaci/v2-0") {
           xml.Naslov('dc' => "http://purl.org/dc/elements/1.1/title") { xml.text "Obrazac OPZ"}
           xml.Autor( 'dc' => "http://purl.org/dc/elements/1.1/creator") { xml.text "KORISNIK 2EP" }
-          xml.Datum( 'dc' => "http://purl.org/dc/elements/1.1/date") {xml.text DateTime.now.strftime("%Y-%m-%dT%H:%M").to_s}
+          xml.Datum( 'dc' => "http://purl.org/dc/elements/1.1/date") {xml.text DateTime.now.strftime("%Y-%m-%dT%H:%M:%S").to_s}
           xml.Format( 'dc' => "http://purl.org/dc/elements/1.1/format") {xml.text "text/xml"}
           xml.Jezik( 'dc'=>"http://purl.org/dc/elements/1.1/language"){ xml.text "hr-HR"}
           xml.Identifikator( 'dc'=>"http://purl.org/dc/elements/1.1/identifier") { xml.text SecureRandom.uuid.to_s}
