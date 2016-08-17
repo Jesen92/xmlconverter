@@ -129,17 +129,17 @@ class ExportXmlsController < ApplicationController
                 @placeni_iznos += racun["placeni_iznos_racuna"].gsub(",", ".").to_f.round(2)
                 @neplaceni_iznos += (racun["iznos_racuna"].gsub(",", ".").to_f.round(2)+racun["iznos_pdv"].gsub(",", ".").to_f.round(2)) - racun["placeni_iznos_racuna"].to_f.round(2)
                 @ukupan_iznos_pdv = racun["iznos_racuna"].gsub(",", ".").to_f.round(2)+racun["iznos_pdv"].gsub(",", ".").to_f.round(2)
-                @ukupan_iznos_racuna_obrasca += @iznos_racuna #ukupni iznosi
-                @ukupan_iznos_pdv_obrasca += @iznos_pdva
-                @ukupan_iznos_racuna_s_pdv_obrasca += @ukupan_iznos_pdv
-                @ukupno_placeni_iznos += @placeni_iznos
-                @ukupno_neplaceni_iznos += @neplaceni_iznos
               end
               xml.K5 number_to_currency(@iznos_racuna, unit: "", separator: ".", delimiter: "")
               xml.K6 number_to_currency(@iznos_pdva, unit: "", separator: ".", delimiter: "")
               xml.K7 number_to_currency(@ukupan_iznos_pdv, unit: "", separator: ".", delimiter: "")
               xml.K8 number_to_currency(@placeni_iznos, unit: "", separator: ".", delimiter: "")
               xml.K9 number_to_currency(@neplaceni_iznos, unit: "", separator: ".", delimiter: "")
+              @ukupan_iznos_racuna_obrasca += @iznos_racuna #ukupni iznosi
+              @ukupan_iznos_pdv_obrasca += @iznos_pdva
+              @ukupan_iznos_racuna_s_pdv_obrasca += @ukupan_iznos_pdv
+              @ukupno_placeni_iznos += @placeni_iznos
+              @ukupno_neplaceni_iznos += @neplaceni_iznos
               xml.Racuni {
                 kupac["racuns_attributes"].values.each do |racun|
                   xml.Racun {
