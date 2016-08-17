@@ -128,8 +128,8 @@ class ExportXmlsController < ApplicationController
                 @iznos_pdva += racun["iznos_pdv"].gsub(",", ".").to_f.round(2)
                 @placeni_iznos += racun["placeni_iznos_racuna"].gsub(",", ".").to_f.round(2)
                 @neplaceni_iznos += (racun["iznos_racuna"].gsub(",", ".").to_f.round(2)+racun["iznos_pdv"].gsub(",", ".").to_f.round(2)) - racun["placeni_iznos_racuna"].to_f.round(2)
-                @ukupan_iznos_pdv = racun["iznos_racuna"].gsub(",", ".").to_f.round(2)+racun["iznos_pdv"].gsub(",", ".").to_f.round(2)
               end
+              @ukupan_iznos_pdv = @iznos_racuna+@iznos_pdva
               xml.K5 number_to_currency(@iznos_racuna, unit: "", separator: ".", delimiter: "")
               xml.K6 number_to_currency(@iznos_pdva, unit: "", separator: ".", delimiter: "")
               xml.K7 number_to_currency(@ukupan_iznos_pdv, unit: "", separator: ".", delimiter: "")
