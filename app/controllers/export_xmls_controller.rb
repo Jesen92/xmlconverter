@@ -117,20 +117,32 @@ class ExportXmlsController < ApplicationController
               xml.K2 kupac["oznaka_poreznog_broja"]
               xml.K3 kupac["porezni_broj"]
               xml.K4 kupac["naziv_kupca"]
+              @rb_racuna = 0
+              @iznos_racuna = 0
+              @iznos_pdva = 0
+              @ukupan_iznos_pdv = 0
+              @placeni_iznos = 0
+              @neplaceni_iznos = 0
+              kupac["racuns_attributes"].values.each do |racun|
+                @iznos_racuna += racun["iznos_racuna"].gsub(",", ".").to_f.round(2)
+                @iznos_pdva += racun["iznos_pdv"].gsub(",", ".").to_f.round(2)
+                @placeni_iznos += racun["placeni_iznos_racuna"].gsub(",", ".").to_f.round(2)
+                @neplaceni_iznos += (racun["iznos_racuna"].gsub(",", ".").to_f.round(2)+racun["iznos_pdv"].gsub(",", ".").to_f.round(2)) - racun["placeni_iznos_racuna"].to_f.round(2)
+                @ukupan_iznos_pdv = racun["iznos_racuna"].gsub(",", ".").to_f.round(2)+racun["iznos_pdv"].gsub(",", ".").to_f.round(2)
+                @ukupan_iznos_racuna_obrasca += @iznos_racuna #ukupni iznosi
+                @ukupan_iznos_pdv_obrasca += @iznos_pdva
+                @ukupan_iznos_racuna_s_pdv_obrasca += @ukupan_iznos_pdv
+                @ukupno_placeni_iznos += @placeni_iznos
+                @ukupno_neplaceni_iznos += @neplaceni_iznos
+              end
+              xml.K5 number_to_currency(@iznos_racuna, unit: "", separator: ".", delimiter: "")
+              xml.K6 number_to_currency(@iznos_pdva, unit: "", separator: ".", delimiter: "")
+              xml.K7 number_to_currency(@ukupan_iznos_pdv, unit: "", separator: ".", delimiter: "")
+              xml.K8 number_to_currency(@placeni_iznos, unit: "", separator: ".", delimiter: "")
+              xml.K9 number_to_currency(@neplaceni_iznos, unit: "", separator: ".", delimiter: "")
               xml.Racuni {
-                @rb_racuna = 0
-                @iznos_racuna = 0
-                @iznos_pdva = 0
-                @ukupan_iznos_pdv = 0
-                @placeni_iznos = 0
-                @neplaceni_iznos = 0
                 kupac["racuns_attributes"].values.each do |racun|
                   xml.Racun {
-                    @iznos_racuna += racun["iznos_racuna"].gsub(",", ".").to_f.round(2)
-                    @iznos_pdva += racun["iznos_pdv"].gsub(",", ".").to_f.round(2)
-                    @placeni_iznos += racun["placeni_iznos_racuna"].gsub(",", ".").to_f.round(2)
-                    @neplaceni_iznos += (racun["iznos_racuna"].gsub(",", ".").to_f.round(2)+racun["iznos_pdv"].gsub(",", ".").to_f.round(2)) - racun["placeni_iznos_racuna"].to_f.round(2)
-                    @ukupan_iznos_pdv = racun["iznos_racuna"].gsub(",", ".").to_f.round(2)+racun["iznos_pdv"].gsub(",", ".").to_f.round(2)
                     xml.R1 @rb_racuna +=1
                     xml.R2 racun["broj_izdanog_racuna"]
                     xml.R3 Date.new(racun["datum_izdanog_racuna(1i)"].to_i, racun["datum_izdanog_racuna(2i)"].to_i, racun["datum_izdanog_racuna(3i)"].to_i)
@@ -144,18 +156,8 @@ class ExportXmlsController < ApplicationController
                     xml.R9 number_to_currency(racun["placeni_iznos_racuna"].gsub(",", "."), unit: "", separator: ".", delimiter: "")
                     xml.R10 number_to_currency((racun["iznos_racuna"].gsub(",", ".").to_f.round(2)+racun["iznos_pdv"].gsub(",", ".").to_f.round(2)) - racun["placeni_iznos_racuna"].gsub(",", ".").to_f.round(2),unit: "", separator: ".", delimiter: "")
                   }
-                  @ukupan_iznos_racuna_obrasca += @iznos_racuna
-                  @ukupan_iznos_pdv_obrasca += @iznos_pdva
-                  @ukupan_iznos_racuna_s_pdv_obrasca += @ukupan_iznos_pdv
-                  @ukupno_placeni_iznos += @placeni_iznos
-                  @ukupno_neplaceni_iznos += @neplaceni_iznos
                 end
               }
-              xml.K5 number_to_currency(@iznos_racuna, unit: "", separator: ".", delimiter: "")
-              xml.K6 number_to_currency(@iznos_pdva, unit: "", separator: ".", delimiter: "")
-              xml.K7 number_to_currency(@ukupan_iznos_pdv, unit: "", separator: ".", delimiter: "")
-              xml.K8 number_to_currency(@placeni_iznos, unit: "", separator: ".", delimiter: "")
-              xml.K9 number_to_currency(@neplaceni_iznos, unit: "", separator: ".", delimiter: "")
             }
           end
           }
