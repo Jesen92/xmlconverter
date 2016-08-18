@@ -13,7 +13,6 @@ class ExportXmlsController < ApplicationController
 
   def import_create
 
-
     puts "Orginalno ime je: #{params[:file_upload][:document]}"
 
     message, zaglavlje_id = Zaglavlje.import_xlsx(params[:file_upload][:document])
@@ -25,7 +24,7 @@ class ExportXmlsController < ApplicationController
       end
       redirect_to(:back)
     else
-      flash[:notice] = "XLSX tablica je uspješno uvezena!"
+      flash[:notice] = "XLSX tablica je uspješno uvezena i obrazac je spremljen!"
       redirect_to export_xmls_edit_path(id: zaglavlje_id.to_i)
     end
 
@@ -61,11 +60,24 @@ class ExportXmlsController < ApplicationController
     @ukupno_placeni_iznos = 0
     @ukupno_neplaceni_iznos = 0
 
+    @provjera_kupac_racun = 0
     @params = params[:zaglavlje]
     @kupac = params[:zaglavlje][:kupacs_attributes].values
 
     if params[:subaction] != "Snimi Obrazac"
 
+      @kupac.each do |kupac|
+        kupac["racuns_attributes"].values.each do |racun|
+          next if racun["_destroy"] == "1"
+          @provjera_kupac_racun = 1
+        end
+
+        if @provjera_kupac_racun = 0
+          flash[:alert] = "Nepravilno ispunjen obrazac!\nProvjerite da li svaki kupac ima barem jedan račun!"
+          return redirect_to(:back)
+        end
+        @provjera_kupac_racun = 0
+      end
     #  number_to_currency(1234567890.50, unit: "R$", separator: ",", delimiter: "")
     # => R$1234567890,50
 
@@ -124,6 +136,7 @@ class ExportXmlsController < ApplicationController
               @placeni_iznos = 0
               @neplaceni_iznos = 0
               kupac["racuns_attributes"].values.each do |racun|
+                next if racun["_destroy"] == "1"
                 @iznos_racuna += racun["iznos_racuna"].gsub(",", ".").to_f.round(2)
                 @iznos_pdva += racun["iznos_pdv"].gsub(",", ".").to_f.round(2)
                 @placeni_iznos += racun["placeni_iznos_racuna"].gsub(",", ".").to_f.round(2)
@@ -142,6 +155,7 @@ class ExportXmlsController < ApplicationController
               @ukupno_neplaceni_iznos += @neplaceni_iznos
               xml.Racuni {
                 kupac["racuns_attributes"].values.each do |racun|
+                  next if racun["_destroy"] == "1"
                   xml.Racun {
                     xml.R1 @rb_racuna +=1
                     xml.R2 racun["broj_izdanog_racuna"]
@@ -241,7 +255,7 @@ class ExportXmlsController < ApplicationController
   def project_params
     params.require(:zaglavlje).permit( :created_at, :updated_at,:oib, :naziv, :mjesto, :ulica, :broj, :email, :sastavio_ime, :sastavio_prezime, :sastavio_email, :sastavio_tel, :sastavio_fax ,:description, :datum_od, :datum_do, :na_dan, :nisu_naplaceni_do,
                                        kupacs_attributes: [ :oznaka_poreznog_broja, :porezni_broj, :naziv_kupca, :zaglavlje_id, :creted_at, :updated_at ,:_destroy,
-                                       racuns_attributes: [:created_at, :updated_at, :iznos_racuna, :iznos_pdv, :placeni_iznos_racuna ,:kupac_id, :broj_izdanog_racuna, :broj_dana_kasnjenja, :datum_izdanog_racuna, :valuta_placanja_racuna]])
+                                       racuns_attributes: [:created_at, :updated_at, :iznos_racuna, :iznos_pdv, :placeni_iznos_racuna ,:kupac_id, :broj_izdanog_racuna, :broj_dana_kasnjenja, :datum_izdanog_racuna, :valuta_placanja_racuna, :_destroy]])
   end
 
 
