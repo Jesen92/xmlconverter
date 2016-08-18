@@ -1,16 +1,16 @@
 <div class="nested-fields"%>
   <div class="well" style="background-color: white">
     <div class="page-header head-page">
-      <h3>Racun</h3>
+      <h3>Račun</h3>
     </div>
 
-    <%= f.input :broj_izdanog_racuna %>
-    <%= f.input :datum_izdanog_racuna %>
-    <%= f.input :valuta_placanja_racuna %>
+    <%= f.input :broj_izdanog_racuna, label: "Broj izdanog računa" %>
+    <%= f.input :datum_izdanog_racuna, label: "Datum izdanog računa" %>
+    <%= f.input :valuta_placanja_racuna, label: "Valuta plaćanja računa" %>
     <!-- <%= f.input :broj_dana_kasnjenja %> -->
-    <%= f.input :iznos_racuna, :input_html => {value: number_with_precision(f.object.iznos_racuna, precision: 2) } %>
-    <%= f.input :iznos_pdv, :input_html => {value: number_with_precision(f.object.iznos_pdv, precision: 2) } %>
-    <%= f.input :placeni_iznos_racuna, :input_html => {value: number_with_precision(f.object.placeni_iznos_racuna, precision: 2) } %>
+    <%= f.input :iznos_racuna, :input_html => {value: number_with_precision(f.object.iznos_racuna, precision: 2) }, label: "Iznos računa" %>
+    <%= f.input :iznos_pdv, :input_html => {value: number_with_precision(f.object.iznos_pdv, precision: 2) } , label: "Iznos pdv"%>
+    <%= f.input :placeni_iznos_racuna, :input_html => {value: number_with_precision(f.object.placeni_iznos_racuna, precision: 2) }, label: "Plaćeni iznos računa" %>
 
 
     <p></p>
