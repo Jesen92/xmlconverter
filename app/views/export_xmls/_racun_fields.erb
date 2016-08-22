@@ -1,20 +1,48 @@
 <div class="nested-fields"%>
   <div class="well" style="background-color: white">
     <div class="page-header head-page">
-      <h3>Račun</h3>
+      <% if f.object.id? %>
+       <a data-toggle="collapse" href="#<%=f.object.id%>" aria-expanded="true" aria-controls="collapseExample" id="collapse155" ><h3>Račun</h3></a><small>Kliknite na naziv računa za proširenje i suženje forme</small>
+    <% else %>
+      <a data-toggle="collapse" href="#collapse123" aria-expanded="true" aria-controls="collapseExample" id="collapse155" ><h3>Račun</h3></a><small>Kliknite na naziv računa za proširenje i suženje forme</small>
+    <% end %>
     </div>
-
+    <div class="label" id="collapse555" style="color: darkgrey; font-style: italic;"></div>
+    <div class="panel-collapse collapse in" id="<%=f.object.id%>">
     <%= f.input :broj_izdanog_racuna, label: "Broj izdanog računa" %>
-    <%= f.input :datum_izdanog_racuna, label: "Datum izdanog računa" %>
-    <%= f.input :valuta_placanja_racuna, label: "Valuta plaćanja računa" %>
     <!-- <%= f.input :broj_dana_kasnjenja %> -->
-    <%= f.input :iznos_racuna, :input_html => {value: number_with_precision(f.object.iznos_racuna, precision: 2) }, label: "Iznos računa" %>
-    <%= f.input :iznos_pdv, :input_html => {value: number_with_precision(f.object.iznos_pdv, precision: 2) } , label: "Iznos pdv"%>
-    <%= f.input :placeni_iznos_racuna, :input_html => {value: number_with_precision(f.object.placeni_iznos_racuna, precision: 2) }, label: "Plaćeni iznos računa" %>
 
-
+  <div class="row">
+    <div class="col-md-4 input_pad"><%= f.input :iznos_racuna, :input_html => {value: number_with_precision(f.object.iznos_racuna, precision: 2) }, label: "Iznos računa" %></div>
+    <div class="col-md-4 input_pad"><%= f.input :iznos_pdv, :input_html => {value: number_with_precision(f.object.iznos_pdv, precision: 2) } , label: "Iznos pdv"%></div>
+    <div class="col-md-4 input_pad"><%= f.input :placeni_iznos_racuna, :input_html => {value: number_with_precision(f.object.placeni_iznos_racuna, precision: 2) }, label: "Plaćeni iznos računa" %></div>
+  </div>
+    <div class="row">
+      <div class="col-md-4"><%= f.input :datum_izdanog_racuna, label: "Datum izdanog računa" %></div>
+      <div class="col-md-4"><%= f.input :valuta_placanja_racuna, label: "Valuta plaćanja računa" %></div>
+    </div>
     <p></p>
 
-    <%= link_to_remove_association "Remove", f, class: "btn btn-danger" %>
+    <%= link_to_remove_association "Izbriši račun", f, class: "btn btn-danger" %>
+
   </div>
 </div>
+</div>
+
+<script>
+  var element_id = document.getElementById("collapse115");
+  var element_href = document.getElementById("collapse155");
+  var element_icon = document.getElementById("collapse555");
+
+  element_id.id = "5"+gon.billcounter.toString();
+
+  element_href.id = "4"+gon.billcounter.toString();
+  element_href.href = "#5"+gon.billcounter.toString();
+
+  element_icon.id = "15"+gon.billcounter.toString();
+
+  element_href.firstElementChild.innerHTML = "Racun #"+gon.billcounter.toString();
+
+  gon.billcounter = gon.billcounter + 1;
+
+</script>

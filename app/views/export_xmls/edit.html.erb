@@ -1,57 +1,71 @@
 
 
-  <div class="page-header head-page">
-    <h1>Unesite podatke za XML ispis</h1>
-  </div>
+<div class="page-header head-page">
+  <h1>Unesite podatke za XML ispis</h1>
+</div>
 
 
-  <%= simple_form_for @zaglavlje, html: { class: 'form-horizontal', multipart: true }, url: export_xmls_create_path, method: :put  do |f| %>
+<%= simple_form_for @zaglavlje, html: { class: 'form-horizontal', multipart: true }, url: export_xmls_create_path, method: :put  do |f| %>
+    <ul class="nav nav-tabs">
+      <li class="active"><a data-toggle="tab" href="#tab_1">Zaglavlje</a></li>
+      <li><a data-toggle="tab" href="#tab_2">Kupci / Računi</a></li>
+    </ul>
 
-      <%= f.input :datum_od %>
-      <%= f.input :datum_do %>
+    <div class="tab-content">
+      <div class="tab-pane in active" id="tab_1">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-4 input_pad"><%= f.input :naziv %></div>
+            <div class="col-md-4 input_pad"><%= f.input :oib %></div>
+            <div class="col-md-4 input_pad"><%= f.input :email %></div>
+          </div>
+          <div class="row">
+            <div class="col-md-4 input_pad "><%= f.input :mjesto %></div>
+            <div class="col-md-4 input_pad "><%= f.input :ulica %></div>
+            <div class="col-md-4 input_pad "><%= f.input :broj %></div>
+          </div>
 
-      <%= f.input :oib %>
-
-      <%= f.input :naziv %>
-
-      <%= f.input :mjesto %>
-      <%= f.input :ulica %>
-      <%= f.input :broj %>
-
-      <%= f.input :email, label: "email" %>
-
+          <div class="row">
+            <div class="col-md-3"><%= f.input :datum_od %></div>
+            <div class="col-md-3"><%= f.input :datum_do %></div>
+            <div class="col-md-3"><%= f.input :na_dan %></div>
+            <div class="col-md-3"><%= f.input :nisu_naplaceni_do, label: "Nisu naplaćeni do" %></div>
+          </div>
+          <!--
       <div class="page-header head-page">
         <h1>Izvješće sastavio:</h1>
       </div>
       <p></p>
-      <%= f.input :sastavio_ime, label: "Ime" %>
-      <%= f.input :sastavio_prezime, label: "Prezime" %>
-      <%= f.input :sastavio_tel, label: "Tel" %>
-      <%= f.input :sastavio_fax, label: "Fax" %>
-      <%= f.input :sastavio_email, label: "email" %>
+        <%= f.input :sastavio_ime, label: "Ime" %>
+        <%= f.input :sastavio_prezime, label: "Prezime" %>
+        <%= f.input :sastavio_tel, label: "Tel" %>
+        <%= f.input :sastavio_fax, label: "Fax" %>
+        <%= f.input :sastavio_email, label: "email" %>
       <p></p>
       <div class="page-header head-page">
 
-      </div>
+      </div> -->
 
-      <%= f.input :na_dan %>
-      <%= f.input :nisu_naplaceni_do, label: "Nisu naplaćeni do" %>
-
-      <div id="kupacs" style="margin-top: 20px">
-        <%= f.simple_fields_for :kupacs do |kupac| %>
-            <%= render 'kupac_fields', :f => kupac  %>
-        <% end %>
-
-        <div class="links" >
-          <div style="margin-top: 50px; margin-bottom: 40px;">
-            <%= link_to_add_association 'Dodaj Kupca', f, :kupacs, class: "btn btn-primary", stlye:"margin-top: 35px; margin-bottom: 35px"  %>
-          </div>
         </div>
       </div>
-      <div class="page-header head-page">
+      <div class="tab-pane" id="tab_2">
+        <div id="kupacs" style="margin-top: 20px">
+          <%= f.simple_fields_for :kupacs do |kupac| %>
+              <%= render 'kupac_fields', :f => kupac  %>
+          <% end %>
+
+          <div class="links" >
+            <div style="margin-top: 50px; margin-bottom: 40px;">
+              <%= link_to_add_association 'Dodaj Kupca', f, :kupacs, class: "btn btn-primary novi_kupac", stlye:"margin-top: 35px; margin-bottom: 35px"  %>
+            </div>
+          </div>
+
+        </div>
 
       </div>
-
+      <div class="page-header head-page">
+        <h3></h3>
+      </div>
       <%= f.button :submit, "Download XML", class:"btn btn-primary" %> <%= f.button :submit, name:"subaction" , value: "Snimi Obrazac", class: "btn btn-success" %><%= link_to "Izbriši obrazac", export_xmls_destroy_path(id: @zaglavlje.id), class: "btn btn-danger pull-right RbtnMargin", data: { confirm: 'Jeste li sigurni da želite izbrisati obrazac?' } %> <%= link_to "Prekid unosa", export_xmls_index_path, class: "btn btn-warning pull-right", data: { confirm: 'Jeste li sigurni da želite prekid unosa?' } %>
-
+    </div>
   <% end %>

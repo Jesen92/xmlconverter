@@ -1,9 +1,19 @@
-<div class="nested-fields" %>
-  <div class="well">
-    <div class="page-header head-page">
-      <h3>Kupac</h3>
-    </div>
 
+<div class="nested-fields" %>
+
+<div class="page-header head-page">
+  <% if !f.object.naziv_kupca? %>
+    <a data-toggle="collapse" href="#collapse123" aria-expanded="true" aria-controls="collapseExample" id="collapse111" ><h3>Kupac</h3></a><small>Kliknite na naziv kupca za proširenje i suženje forme</small>
+  <% else %>
+    <a data-toggle="collapse" href="#<%=f.object.id%>" aria-expanded="false" aria-controls="collapseExample" id="collapse111" ><h3><%= f.object.naziv_kupca %></h3></a><small>Kliknite na naziv kupca za proširenje i suženje forme</small>
+  <% end %>
+</div>
+  <div class="label" id="collapse222" style="color: darkgrey; font-style: italic;"></div>
+<div class="panel-collapse collapse in" id="<%=f.object.id%>">
+<div class="container">
+  <%= f.input :naziv_kupca %>
+  <div class="row">
+    <div class="col-md-6 input_pad">
     <% if f.object.oznaka_poreznog_broja? %>
       <%= f.input :oznaka_poreznog_broja ,collection: ([["OIB kupca", 1], ["PDV identifikacijski broj", 2], ["Ostali porezni brojevi", 3]]),
                 selected: f.object.oznaka_poreznog_broja %>
@@ -11,11 +21,9 @@
         <%= f.input :oznaka_poreznog_broja ,collection: ([["OIB kupca", 1], ["PDV identifikacijski broj", 2], ["Ostali porezni brojevi", 3]]),
                     selected: 1 %>
     <% end %>
-
-
-        <%= f.input :porezni_broj %>
-    <%= f.input :naziv_kupca %>
-
+    </div>
+    <div class="col-md-6 input_pad"><%= f.input :porezni_broj %></div>
+  </div>
     <div id="racuns" style="margin-top: 20px">
       <%= f.simple_fields_for :racuns, html: {multipart: true} do |racun| %>
           <%= render 'racun_fields', :f => racun  %>
@@ -33,8 +41,30 @@
 
     <div style="margin-bottom: 30px">
 
-    <%= link_to_remove_association "Remove", f, class: "btn btn-danger" %>
+    <%= link_to_remove_association "Izbriši kupca", f, class: "btn btn-danger" %>
 
     </div>
   </div>
 </div>
+  <div class="page-header head-page">
+    <h3></h3>
+  </div>
+</div>
+
+<script>
+    var element_id = document.getElementById("collapse123");
+    var element_href = document.getElementById("collapse111");
+    var element_icon = document.getElementById("collapse222");
+
+    element_id.id = gon.mycounter;
+
+    element_href.id = "1"+gon.mycounter.toString();
+    element_href.href = "#"+gon.mycounter.toString();
+
+    element_icon.id = "2"+gon.mycounter.toString();
+
+    element_href.firstElementChild.innerHTML = "Kupac #"+gon.mycounter.toString();
+
+    gon.mycounter = gon.mycounter + 1;
+
+</script>

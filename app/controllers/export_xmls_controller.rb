@@ -41,6 +41,9 @@ class ExportXmlsController < ApplicationController
 
   def new
     @zaglavlje = Zaglavlje.new
+
+    gon.mycounter = 1
+    gon.billcounter = 1
   end
 
   def create
