@@ -2,13 +2,13 @@
   <div class="well" style="background-color: white">
     <div class="page-header head-page">
       <% if f.object.id? %>
-       <a data-toggle="collapse" href="#<%=f.object.id%>" aria-expanded="true" aria-controls="collapseExample" id="collapse155" ><h3>Račun</h3></a><small>Kliknite na naziv računa za proširenje i suženje forme</small>
+       <a data-toggle="collapse" href="#racun<%=f.object.id%>" aria-expanded="true" aria-controls="collapseExample" id="racunToggle<%=f.object.id%>" ><h3>Račun</h3></a><small>Kliknite na naziv računa za proširenje i suženje forme</small>
     <% else %>
-      <a data-toggle="collapse" href="#collapse123" aria-expanded="true" aria-controls="collapseExample" id="collapse155" ><h3>Račun</h3></a><small>Kliknite na naziv računa za proširenje i suženje forme</small>
+      <a data-toggle="collapse" href="#collapse115" aria-expanded="true" aria-controls="collapseExample" id="collapse155" ><h3>Račun</h3></a><small>Kliknite na naziv računa za proširenje i suženje forme</small>
     <% end %>
     </div>
     <div class="label" id="collapse555" style="color: darkgrey; font-style: italic;"></div>
-    <div class="panel-collapse collapse in" id="<%=f.object.id%>">
+    <div class="panel-collapse collapse in" id="<%= f.object.id? ? "racun"+f.object.id.to_s : "collapse115" %>">
     <%= f.input :broj_izdanog_racuna, label: "Broj izdanog računa" %>
     <!-- <%= f.input :broj_dana_kasnjenja %> -->
 

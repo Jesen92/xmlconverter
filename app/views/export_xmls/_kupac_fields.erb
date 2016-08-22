@@ -5,11 +5,11 @@
   <% if !f.object.naziv_kupca? %>
     <a data-toggle="collapse" href="#collapse123" aria-expanded="true" aria-controls="collapseExample" id="collapse111" ><h3>Kupac</h3></a><small>Kliknite na naziv kupca za proširenje i suženje forme</small>
   <% else %>
-    <a data-toggle="collapse" href="#<%=f.object.id%>" aria-expanded="false" aria-controls="collapseExample" id="collapse111" ><h3><%= f.object.naziv_kupca %></h3></a><small>Kliknite na naziv kupca za proširenje i suženje forme</small>
+    <a data-toggle="collapse" href="#kupac<%=f.object.id%>" aria-expanded="false" aria-controls="collapseExample" id="kupacToggle<%=f.object.id%>" ><h3><%= f.object.naziv_kupca %></h3></a><small>Kliknite na naziv kupca za proširenje i suženje forme</small>
   <% end %>
 </div>
   <div class="label" id="collapse222" style="color: darkgrey; font-style: italic;"></div>
-<div class="panel-collapse collapse in" id="<%=f.object.id%>">
+  <div class="panel-collapse collapse in" id="<%= f.object.id? ? "kupac"+f.object.id.to_s : "collapse123" %>">
 <div class="container">
   <%= f.input :naziv_kupca %>
   <div class="row">
@@ -55,7 +55,7 @@
     var element_id = document.getElementById("collapse123");
     var element_href = document.getElementById("collapse111");
     var element_icon = document.getElementById("collapse222");
-
+    alert(gon.mycounter);
     element_id.id = gon.mycounter;
 
     element_href.id = "1"+gon.mycounter.toString();

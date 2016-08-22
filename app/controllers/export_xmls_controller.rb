@@ -51,6 +51,9 @@ class ExportXmlsController < ApplicationController
 
   def edit
     @zaglavlje = Zaglavlje.find(params[:id])
+
+    gon.mycounter = 1
+    gon.billcounter = 1
   end
 
   def update

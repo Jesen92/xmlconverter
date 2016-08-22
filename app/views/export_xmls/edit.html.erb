@@ -69,3 +69,4 @@
       <%= f.button :submit, "Download XML", class:"btn btn-primary" %> <%= f.button :submit, name:"subaction" , value: "Snimi Obrazac", class: "btn btn-success" %><%= link_to "Izbriši obrazac", export_xmls_destroy_path(id: @zaglavlje.id), class: "btn btn-danger pull-right RbtnMargin", data: { confirm: 'Jeste li sigurni da želite izbrisati obrazac?' } %> <%= link_to "Prekid unosa", export_xmls_index_path, class: "btn btn-warning pull-right", data: { confirm: 'Jeste li sigurni da želite prekid unosa?' } %>
     </div>
   <% end %>
+
