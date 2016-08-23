@@ -1,7 +1,7 @@
 
 
 <div class="page-header head-page">
-    <h1>Unesite podatke za XML ispis</h1>
+    <h1>OPZ-STAT-1 obrazac</h1>
   </div>
 
 
@@ -31,10 +31,17 @@
         <div class="col-md-3"><%= f.input :na_dan %></div>
         <div class="col-md-3"><%= f.input :nisu_naplaceni_do, label: "Nisu naplaćeni do" %></div>
       </div>
-<!--
+
+      <div class="row">
+        <div class="col-md-6 input_pad"><%= f.input :opz_ukupan_iznos_racuna_s_pdv, label: "OPZ Ukupan iznos računa s pdv" %></div>
+        <div class="col-md-6 input_pad"><%= f.input :opz_ukupan_iznos_pdv, label: "OPZ Ukupan iznos pdv" %></div>
+      </div>
+
+      <!--
       <div class="page-header head-page">
         <h1>Izvješće sastavio:</h1>
       </div>
+
       <p></p>
         <%= f.input :sastavio_ime, label: "Ime" %>
         <%= f.input :sastavio_prezime, label: "Prezime" %>
@@ -44,7 +51,8 @@
       <p></p>
       <div class="page-header head-page">
 
-      </div> -->
+      </div>
+      -->
 
     </div>
   </div>

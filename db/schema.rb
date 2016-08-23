@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160810115935) do
+ActiveRecord::Schema.define(version: 20160823112406) do
 
   create_table "file_uploads", force: :cascade do |t|
     t.string   "document_file_name",    limit: 255
@@ -23,7 +23,6 @@ ActiveRecord::Schema.define(version: 20160810115935) do
   end
 
   create_table "kupacs", force: :cascade do |t|
-    t.integer  "r_b",                   limit: 4
     t.integer  "oznaka_poreznog_broja", limit: 4
     t.string   "porezni_broj",          limit: 255
     t.string   "naziv_kupca",           limit: 255
@@ -67,6 +66,10 @@ ActiveRecord::Schema.define(version: 20160810115935) do
     t.string   "last_sign_in_ip",        limit: 255
     t.datetime "created_at",                                      null: false
     t.datetime "updated_at",                                      null: false
+    t.string   "name",                   limit: 255
+    t.string   "surname",                limit: 255
+    t.string   "tel",                    limit: 255
+    t.string   "fax",                    limit: 255
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
@@ -75,21 +78,24 @@ ActiveRecord::Schema.define(version: 20160810115935) do
   create_table "zaglavljes", force: :cascade do |t|
     t.date     "datum_od"
     t.date     "datum_do"
-    t.string   "naziv",             limit: 255
-    t.string   "mjesto",            limit: 255
-    t.string   "ulica",             limit: 255
-    t.string   "broj",              limit: 255
-    t.string   "email",             limit: 255
-    t.string   "sastavio_ime",      limit: 255
-    t.string   "sastavio_prezime",  limit: 255
-    t.string   "sastavio_tel",      limit: 255
-    t.string   "sastavio_fax",      limit: 255
-    t.string   "sastavio_email",    limit: 255
+    t.string   "naziv",                         limit: 255
+    t.string   "mjesto",                        limit: 255
+    t.string   "ulica",                         limit: 255
+    t.string   "broj",                          limit: 255
+    t.string   "email",                         limit: 255
+    t.string   "sastavio_ime",                  limit: 255
+    t.string   "sastavio_prezime",              limit: 255
+    t.string   "sastavio_tel",                  limit: 255
+    t.string   "sastavio_fax",                  limit: 255
+    t.string   "sastavio_email",                limit: 255
     t.date     "na_dan"
     t.date     "nisu_naplaceni_do"
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
-    t.integer  "oib",               limit: 8
+    t.datetime "created_at",                                                         null: false
+    t.datetime "updated_at",                                                         null: false
+    t.integer  "oib",                           limit: 8
+    t.decimal  "opz_ukupan_iznos_racuna_s_pdv",             precision: 10, scale: 2
+    t.decimal  "opz_ukupan_iznos_pdv",                      precision: 10, scale: 2
+    t.integer  "user_id",                       limit: 4
   end
 
 end

@@ -1,8 +1,10 @@
 class Zaglavlje < ActiveRecord::Base
   has_many :kupacs
+  belongs_to :user
+
   accepts_nested_attributes_for :kupacs, allow_destroy: true
 
-  def self.import_xlsx(file)
+  def self.import_xlsx(file, user_id)
     puts "usao je u import_xlsx"
     @zaglavlje_id = 0
 
@@ -16,6 +18,7 @@ class Zaglavlje < ActiveRecord::Base
     row = Hash[[zaglavlje_header, zaglavlje.row(zaglavlje.last_row)].transpose]
     article = new   #find_by_id(row["id"]) || - ako ce se mijenjati vrijednosti preko excel tablica
     article.attributes = row.to_hash.slice(*row.to_hash.keys)
+    article.user_id = user_id
     article.save!
     @zaglavlje_id = article.id
     @kupci = {}

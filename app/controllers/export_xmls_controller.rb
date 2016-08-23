@@ -15,7 +15,7 @@ class ExportXmlsController < ApplicationController
 
     puts "Orginalno ime je: #{params[:file_upload][:document]}"
 
-    message, zaglavlje_id = Zaglavlje.import_xlsx(params[:file_upload][:document])
+    message, zaglavlje_id = Zaglavlje.import_xlsx(params[:file_upload][:document], current_user.id)
 
     if message.include? "Pogreška"
       flash[:alert] = message
@@ -33,7 +33,7 @@ class ExportXmlsController < ApplicationController
   #############################################
 
   def index
-    @values_grid = initialize_grid(Zaglavlje.all, include: [ :kupacs ], order: 'zaglavljes.created_at', order_direction: 'desc')
+    @values_grid = initialize_grid(Zaglavlje.all, include: [ :kupacs, :user ], order: 'zaglavljes.created_at', order_direction: 'desc')
   end
 
   def show
@@ -78,7 +78,7 @@ class ExportXmlsController < ApplicationController
           @provjera_kupac_racun = 1
         end
 
-        if @provjera_kupac_racun = 0
+        if @provjera_kupac_racun == 0
           flash[:alert] = "Nepravilno ispunjen obrazac!\nProvjerite da li svaki kupac ima barem jedan račun!"
           return redirect_to(:back)
         end
@@ -116,11 +116,11 @@ class ExportXmlsController < ApplicationController
             xml.Email @params[:email]
           }
           xml.IzvjesceSastavio {
-          xml.Ime @params[:sastavio_ime]
-          xml.Prezime @params[:sastavio_prezime]
-          xml.Telefon @params[:sastavio_tel]
-          xml.Fax @params[:sastavio_fax]
-          xml.Email @params[:sastavio_email]
+          xml.Ime current_user.name
+          xml.Prezime current_user.surname
+          xml.Telefon current_user.tel
+          xml.Fax current_user.fax
+          xml.Email current_user.email
           }
           xml.NaDan Date.new(@params["na_dan(1i)"].to_i, @params["na_dan(2i)"].to_i, @params["na_dan(3i)"].to_i )
           @nisu_naplaceni_do = Date.new(@params["nisu_naplaceni_do(1i)"].to_i, @params["nisu_naplaceni_do(2i)"].to_i, @params["nisu_naplaceni_do(3i)"].to_i)
@@ -186,8 +186,8 @@ class ExportXmlsController < ApplicationController
           xml.UkupanIznosRacunaSPdvObrasca number_to_currency(@ukupan_iznos_racuna_s_pdv_obrasca, unit: "", separator: ".", delimiter: "")
           xml.UkupniPlaceniIznosRacunaObrasca number_to_currency(@ukupno_placeni_iznos, unit: "", separator: ".", delimiter: "")
           xml.NeplaceniIznosRacunaObrasca number_to_currency(@ukupno_neplaceni_iznos, unit: "", separator: ".", delimiter: "")
-          xml.OPZUkupanIznosRacunaSPdv "0.00" #TODO upit u poreznu za što je to pošto nije pojašnjeno u dokumentaciji
-          xml.OPZUkupanIznosPdv "0.00" #TODO - \\ -
+          xml.OPZUkupanIznosRacunaSPdv !params[:zaglavlje]["opz_ukupan_iznos_racuna_s_pdv"].nil? ? number_to_currency(params[:zaglavlje]["opz_ukupan_iznos_racuna_s_pdv"].gsub(",", "."), unit: "", separator: ".", delimiter: "") : "0.00" #TODO upit u poreznu za što je to pošto nije pojašnjeno u dokumentaciji
+          xml.OPZUkupanIznosPdv !params[:zaglavlje]["opz_ukupan_iznos_pdv"].nil? ? number_to_currency(params[:zaglavlje]["opz_ukupan_iznos_pdv"].gsub(",", "."), unit: "", separator: ".", delimiter: "") : "0.00" #TODO - \\ -
         }
       }
 
@@ -200,7 +200,7 @@ class ExportXmlsController < ApplicationController
     else
 
         @obrazac = Zaglavlje.new(project_params)
-
+        @obrazac.user_id = current_user.id
         @obrazac.save
 
         #TODO izraditi posebnu formu za unos kupaca i izrada nove tablice "Zaglavljes_kupacs" radi optimizaranja baze

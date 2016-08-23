@@ -8,8 +8,8 @@
     t.naziv
   end
 
-  g.column name: 'Sastavio', attribute: 'sastavio_ime', filter: false do |t|
-    t.sastavio_ime+" "+t.sastavio_prezime
+  g.column name: 'Sastavio', attribute: 'surname', :filter => false , :assoc => :user do |t|
+      t.user.name+" "+t.user.surname
   end
 
   g.column name: 'Na dan', attribute: 'na_dan', :filter => :jquery_datepicker do |t|
