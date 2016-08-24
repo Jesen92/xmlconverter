@@ -35,3 +35,16 @@
 .input_pad {
   padding-right: 25px;
 }
+
+.white_background {
+  border-width: 0;
+  padding: 5px 0 5px 0;
+  background: white;
+  text-align: center;
+  width: 100%;
+}
+
+.white_background:hover {
+  cursor: pointer;
+  background: lightgrey;
+}

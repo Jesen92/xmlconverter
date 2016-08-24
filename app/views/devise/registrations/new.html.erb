@@ -11,6 +11,7 @@
     <%= f.input :surname, required: true %>
     <%= f.input :tel, required: true %>
     <%= f.input :fax, required: true %>
+    <%= f.input :role, required: true, collection: ["Korisnik","Admin"], :selected => "Korisnik" %>
   </div>
 
   <div class="form-actions">

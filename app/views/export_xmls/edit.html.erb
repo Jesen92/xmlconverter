@@ -6,11 +6,14 @@
 
 
 <%= simple_form_for @zaglavlje, html: { class: 'form-horizontal', multipart: true }, url: export_xmls_create_path, method: :put  do |f| %>
+    <% if f.object.zakljucano_brisanje? || f.object.zakljucano_uredivanje? %>
+      <div class="alert alert-warning" role="alert"><b>Upozorenje!</b> Ostalim korisnicima obrazac je zaključan za: <% if f.object.zakljucano_brisanje? %><br/><b>BRISANJE</b> <% end %> <% if f.object.zakljucano_uredivanje? %> <br/><b>UREĐIVANJE</b> <% end %></div>
+    <% end %>
     <ul class="nav nav-tabs">
       <li class="active"><a data-toggle="tab" href="#tab_1">Zaglavlje</a></li>
       <li><a data-toggle="tab" href="#tab_2">Kupci / Računi</a></li>
     </ul>
-
+    <%= f.input :id, :as => :hidden %>
     <div class="tab-content">
       <div class="tab-pane in active" id="tab_1">
         <div class="container">
@@ -33,10 +36,24 @@
           </div>
 
           <div class="row">
-            <div class="col-md-6 input_pad"><%= f.input :opz_ukupan_iznos_racuna_s_pdv, label: "OPZ Ukupan iznos računa s pdv" %></div>
-            <div class="col-md-6 input_pad"><%= f.input :opz_ukupan_iznos_pdv, label: "OPZ Ukupan iznos pdv" %></div>
+            <div class="col-md-6 input_pad"><%= f.input :opz_ukupan_iznos_racuna_s_pdv, :input_html => {value: number_with_precision(f.object.opz_ukupan_iznos_racuna_s_pdv, precision: 2) }, label: "OPZ Ukupan iznos računa s pdv" %></div>
+            <div class="col-md-6 input_pad"><%= f.input :opz_ukupan_iznos_pdv, :input_html => {value: number_with_precision(f.object.opz_ukupan_iznos_pdv, precision: 2) } , label: "OPZ Ukupan iznos pdv" %></div>
           </div>
-      <!--
+
+          <br/>
+          <div class="row">
+            <div class="col-md-4">
+              <% if f.object.kreiran_xml? %>
+                <b>XML je preuzet:</b> <div style="font-style: italic;"><%= f.object.kreiran_xml %></div> od korisnika <div style="font-style: italic;"><%= f.object.korisnik_preuzeo_xml %></div>
+              <% end %>
+            </div>
+            <div class="col-md-4">
+              <% if f.object.poslan_na_poreznu? %>
+                  <b>Poslano je na poreznu: </b><div style="font-style: italic;"><%= f.object.poslan_na_poreznu %></div> od korisnika <div style="font-style: italic;"><%= f.object.korisnik_porezna %></div>
+              <% end %>
+            </div>
+          </div>
+              <!--
       <div class="page-header head-page">
         <h1>Izvješće sastavio:</h1>
       </div>
@@ -71,7 +88,41 @@
       <div class="page-header head-page">
         <h3></h3>
       </div>
-      <%= f.button :submit, "Download XML", class:"btn btn-primary" %> <%= f.button :submit, name:"subaction" , value: "Snimi Obrazac", class: "btn btn-success" %><%= link_to "Izbriši obrazac", export_xmls_destroy_path(id: @zaglavlje.id), class: "btn btn-danger pull-right RbtnMargin", data: { confirm: 'Jeste li sigurni da želite izbrisati obrazac?' } %> <%= link_to "Prekid unosa", export_xmls_index_path, class: "btn btn-warning pull-right", data: { confirm: 'Jeste li sigurni da želite prekid unosa?' } %>
+      <%= f.button :submit, "Preuzmi XML", class:"btn btn-primary" %>  <% if !f.object.poslan_na_poreznu? %><%= f.button :submit, name:"subaction" , value: "Poslano na poreznu", class: "btn btn-primary" %><% end %> <%= f.button :submit, name:"subaction" , value: "Snimi Obrazac", class: "btn btn-success" %><%= link_to "Izbriši obrazac", export_xmls_destroy_path(id: @zaglavlje.id), class: "btn btn-danger pull-right RbtnMargin", data: { confirm: 'Jeste li sigurni da želite izbrisati obrazac?' } %> <%= link_to "Prekid unosa", export_xmls_index_path, class: "btn btn-warning pull-right RbtnMargin", data: { confirm: 'Jeste li sigurni da želite prekid unosa?' } %>
+<% if f.object.user_id == current_user.id || current_user.role == "Admin" %>
+      <% if !f.object.zakljucano_brisanje? || !f.object.zakljucano_uredivanje? %>
+        <div class="dropup pull-right RbtnMargin">
+  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Zaključaj
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+    <% if !f.object.zakljucano_uredivanje? %><li><%= f.button :submit, name:"subaction", value: "Uređivanje", class: "white_background" %></li><% end %>
+    <% if !f.object.zakljucano_brisanje? %><li><%= f.button :submit, name:"subaction", value: "Brisanje", class: "white_background" %></li><% end %>
+    <% if !f.object.zakljucano_uredivanje? && !f.object.zakljucano_brisanje? %>
+        <li role="separator" class="divider"></li>
+        <li><%= f.button :submit, name:"subaction", value: "Uređivanje/Brisanje", class: "white_background" %></li>
+    <% end %>
+  </ul>
+</div>
+    <% end %>
+    <% if f.object.zakljucano_brisanje? || f.object.zakljucano_uredivanje? %>
+        <div class="dropup pull-right ">
+          <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Otključaj
+            <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+            <% if f.object.zakljucano_uredivanje? %><li><%= f.button :submit, name:"subaction", value: "Uređivanje", class: "white_background" %></li><% end %>
+            <% if f.object.zakljucano_brisanje? %><li><%= f.button :submit, name:"subaction", value: "Brisanje", class: "white_background" %></li><% end %>
+            <% if f.object.zakljucano_uredivanje? && f.object.zakljucano_brisanje? %>
+                <li role="separator" class="divider"></li>
+                <li><%= f.button :submit, name:"subaction", value: "Uređivanje/Brisanje", class: "white_background" %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+<% end %>
     </div>
   <% end %>
 
