@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(version: 20160824113224) do
   end
 
   create_table "kupacs", force: :cascade do |t|
+    t.integer  "r_b",                   limit: 4
     t.integer  "oznaka_poreznog_broja", limit: 4
     t.string   "porezni_broj",          limit: 255
     t.string   "naziv_kupca",           limit: 255
@@ -42,13 +43,13 @@ ActiveRecord::Schema.define(version: 20160824113224) do
     t.date     "datum_izdanog_racuna"
     t.date     "valuta_placanja_racuna"
     t.integer  "broj_dana_kasnjenja",     limit: 4
-    t.decimal  "iznos_racuna",                        precision: 10
-    t.decimal  "iznos_pdv",                           precision: 10
-    t.decimal  "ukupan_iznos_racuna_pdv",             precision: 10
-    t.decimal  "placeni_iznos_racuna",                precision: 10
-    t.decimal  "neplaceni_dio_racuna",                precision: 10
-    t.datetime "created_at",                                         null: false
-    t.datetime "updated_at",                                         null: false
+    t.decimal  "iznos_racuna",                        precision: 10, scale: 2
+    t.decimal  "iznos_pdv",                           precision: 10, scale: 2
+    t.decimal  "ukupan_iznos_racuna_pdv",             precision: 10, scale: 2
+    t.decimal  "placeni_iznos_racuna",                precision: 10, scale: 2
+    t.decimal  "neplaceni_dio_racuna",                precision: 10, scale: 2
+    t.datetime "created_at",                                                   null: false
+    t.datetime "updated_at",                                                   null: false
     t.integer  "kupac_id",                limit: 4
     t.string   "porezni_broj_kupca",      limit: 255
   end
@@ -91,11 +92,11 @@ ActiveRecord::Schema.define(version: 20160824113224) do
     t.string   "sastavio_email",                limit: 255
     t.date     "na_dan"
     t.date     "nisu_naplaceni_do"
-    t.datetime "created_at",                                                         null: false
-    t.datetime "updated_at",                                                         null: false
+    t.datetime "created_at",                                               null: false
+    t.datetime "updated_at",                                               null: false
     t.integer  "oib",                           limit: 8
-    t.decimal  "opz_ukupan_iznos_racuna_s_pdv",             precision: 10, scale: 2
-    t.decimal  "opz_ukupan_iznos_pdv",                      precision: 10, scale: 2
+    t.decimal  "opz_ukupan_iznos_racuna_s_pdv",             precision: 10
+    t.decimal  "opz_ukupan_iznos_pdv",                      precision: 10
     t.integer  "user_id",                       limit: 4
     t.datetime "kreiran_xml"
     t.datetime "poslan_na_poreznu"
