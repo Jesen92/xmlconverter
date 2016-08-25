@@ -18,6 +18,7 @@
 //= require jquery_ujs
 //= require turbolinks
 //= require wice_grid
+//= require chosen-jquery
 //= require_tree .
 //= require cocoon
 

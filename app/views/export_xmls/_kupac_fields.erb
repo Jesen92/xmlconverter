@@ -11,6 +11,7 @@
   <div class="label" id="collapse222" style="color: darkgrey; font-style: italic;"></div>
   <div class="panel-collapse collapse in" id="<%= f.object.id? ? "kupac"+f.object.id.to_s : "collapse123" %>">
 <div class="container">
+  <!--
   <%= f.input :naziv_kupca %>
   <div class="row">
     <div class="col-md-6 input_pad">
@@ -23,7 +24,11 @@
     <% end %>
     </div>
     <div class="col-md-6 input_pad"><%= f.input :porezni_broj %></div>
-  </div>
+  </div> -->
+
+    <%= f.input :id, :as => :select, :collection => Kupac.all.map {|kupac| [kupac.naziv_kupca, kupac.id]}, class:"chosen-select" %>
+    <%= f.input :oznaka_poreznog_broja ,collection: ([["OIB kupca", 1], ["PDV identifikacijski broj", 2], ["Ostali porezni brojevi", 3]]), selected: 1 %>
+
     <div id="racuns" style="margin-top: 20px">
       <%= f.simple_fields_for :racuns, html: {multipart: true} do |racun| %>
           <%= render 'racun_fields', :f => racun  %>

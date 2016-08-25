@@ -1,3 +1,4 @@
+<% if f.object.zaglavlje_id == @zaglavlje.id || f.object.zaglavlje_id == nil %>
 <div class="nested-fields"%>
   <div class="well" style="background-color: white">
     <div class="page-header head-page">
@@ -28,7 +29,7 @@
   </div>
 </div>
 </div>
-
+<% end %>
 <script>
   var element_id = document.getElementById("collapse115");
   var element_href = document.getElementById("collapse155");

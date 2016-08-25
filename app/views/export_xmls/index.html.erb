@@ -9,10 +9,20 @@
   </ul>
 </div>
 
+<div class="btn-group" >
+  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Kupci <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu">
+    <li><%= link_to "Pregled svih kupaca", kupacs_index_path %></li>
+    <li><%= link_to "Novi kupac", kupacs_new_path %></li>
+  </ul>
+</div>
+
 <%= link_to "Sign out", destroy_user_session_path, class: "btn btn-danger pull-right",  :method => :delete %>
 
   <div class="page-header head-page">
-    <h1>Obrasci</h1>
+    <h1>OPZ-STAT-1 obrasci</h1>
   </div>
 
 

@@ -1,5 +1,19 @@
 Rails.application.routes.draw do
 
+  get 'kupacs/new'
+
+  get 'kupacs/create'
+
+  get 'kupacs/edit'
+
+  get 'kupacs/update'
+
+  get 'kupacs/index'
+
+  get 'kupacs/show'
+
+  get 'kupacs/destroy'
+
   get 'export_xmls/index'
 
   get 'export_xmls/show'
@@ -49,6 +63,7 @@ Rails.application.routes.draw do
     get :download_xlsx, on: :collection
     get :download_xlsx_primjer, on: :collection
   end
+    resources :kupacs
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

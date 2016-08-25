@@ -119,18 +119,25 @@ class ExportXmlsController < ApplicationController
 
     elsif params[:subaction] != "Snimi Obrazac" && params[:subaction] != "Poslano na poreznu"
 
-      @kupac.each do |kupac|
-        kupac["racuns_attributes"].values.each do |racun|
-          next if racun["_destroy"] == "1"
-          @provjera_kupac_racun = 1
+      @zaglavlje = Zaglavlje.find(params[:zaglavlje][:id])
+
+      @zaglavlje.kupacs.each do |kupac|
+
+        kupac.racuns.each do |racun|
+          if racun.zaglavlje_id == @zaglavlje.id
+            @provjera_kupac_racun = 1
+            break
+          end
         end
 
-        if @provjera_kupac_racun == 0
-          flash[:alert] = "Nepravilno ispunjen obrazac!\nProvjerite da li svaki kupac ima barem jedan račun!"
-          return redirect_to(:back)
-        end
-        @provjera_kupac_racun = 0
+          if @provjera_kupac_racun == 0
+            flash[:alert] = "Nepravilno ispunjen obrazac!\nProvjerite da li svaki kupac ima barem jedan račun!"
+            return redirect_to(:back)
+          end
+          @provjera_kupac_racun = 0
       end
+
+
     #  number_to_currency(1234567890.50, unit: "R$", separator: ",", delimiter: "")
     # => R$1234567890,50
 
@@ -149,18 +156,18 @@ class ExportXmlsController < ApplicationController
         }
         xml.Zaglavlje {
           xml.Razdoblje {
-            xml.DatumOd Date.new(@params["datum_od(1i)"].to_i, @params["datum_od(2i)"].to_i, @params["datum_od(3i)"].to_i).strftime("%Y-%m-%d")
-            xml.DatumDo Date.new(@params["datum_do(1i)"].to_i, @params["datum_do(2i)"].to_i ,@params["datum_do(3i)"].to_i).strftime("%Y-%m-%d")
+            xml.DatumOd @zaglavlje.datum_od
+            xml.DatumDo @zaglavlje.datum_do
           }
           xml.PorezniObveznik {
-            xml.OIB @params[:oib]
-            xml.Naziv @params[:naziv]
+            xml.OIB @zaglavlje.oib
+            xml.Naziv @zaglavlje.naziv
             xml.Adresa{
-              xml.Mjesto @params[:mjesto]
-              xml.Ulica @params[:ulica]
-              xml.Broj @params[:broj]
+              xml.Mjesto @zaglavlje.mjesto
+              xml.Ulica @zaglavlje.ulica
+              xml.Broj @zaglavlje.broj
             }
-            xml.Email @params[:email]
+            xml.Email @zaglavlje.email
           }
           xml.IzvjesceSastavio {
           xml.Ime current_user.name
@@ -169,31 +176,53 @@ class ExportXmlsController < ApplicationController
           xml.Fax current_user.fax
           xml.Email current_user.email
           }
-          xml.NaDan Date.new(@params["na_dan(1i)"].to_i, @params["na_dan(2i)"].to_i, @params["na_dan(3i)"].to_i )
-          @nisu_naplaceni_do = Date.new(@params["nisu_naplaceni_do(1i)"].to_i, @params["nisu_naplaceni_do(2i)"].to_i, @params["nisu_naplaceni_do(3i)"].to_i)
-          xml.NisuNaplaceniDo @nisu_naplaceni_do #Date.new(@params["nisu_naplaceni_do(1i)"].to_i, @params["nisu_naplaceni_do(2i)"].to_i, @params["nisu_naplaceni_do(3i)"].to_i)
+          xml.NaDan @zaglavlje.na_dan
+          xml.NisuNaplaceniDo @zaglavlje.nisu_naplaceni_do
         }
         xml.Tijelo {
           @rb = 0
           xml.Kupci {
-          @kupac.each do |kupac|
+            @zaglavlje.kupacs.each do |kupac|
             xml.Kupac {
+              @kupac_zaglavlje = KupacZaglavlje.find_by(kupac_id: kupac.id, zaglavlje_id: @zaglavlje.id)
               xml.K1 @rb += 1
-              xml.K2 kupac["oznaka_poreznog_broja"]
-              xml.K3 kupac["porezni_broj"]
-              xml.K4 kupac["naziv_kupca"]
+              xml.K2 @kupac_zaglavlje.oznaka_poreznog_broja
+              if @kupac_zaglavlje.oznaka_poreznog_broja == 1
+                if kupac.porezni_broj?
+                  @porezni_broj = kupac.porezni_broj
+                else
+                  flash[:alert] = "Kupac "+kupac.naziv_kupca+" u matičnim podacima na sadrži OIB! XML nije kreiran!"
+                  return redirect_to(:back)
+                end
+              elsif @kupac_zaglavlje.oznaka_poreznog_broja == 2
+                if kupac.pdv_identifikacijski_broj?
+                  @porezni_broj = kupac.pdv_identifikacijski_broj
+                else
+                  flash[:alert] = "Kupac "+kupac.naziv_kupca+" u matičnim podacima na sadrži PDV identifikacijski broj! XML nije kreiran!"
+                  return redirect_to(:back)
+                end
+              else
+                if kupac.ostali_brojevi?
+                  @porezni_broj = kupac.ostali_brojevi
+                else
+                  flash[:alert] = "Kupac "+kupac.naziv_kupca+" u matičnim podacima na sadrži ostale brojeve! XML nije kreiran!"
+                  return redirect_to(:back)
+                end
+              end
+              xml.K3 @porezni_broj
+              xml.K4 kupac.naziv_kupca
               @rb_racuna = 0
               @iznos_racuna = 0
               @iznos_pdva = 0
               @ukupan_iznos_pdv = 0
               @placeni_iznos = 0
               @neplaceni_iznos = 0
-              kupac["racuns_attributes"].values.each do |racun|
-                next if racun["_destroy"] == "1"
-                @iznos_racuna += racun["iznos_racuna"].gsub(",", ".").to_f.round(2)
-                @iznos_pdva += racun["iznos_pdv"].gsub(",", ".").to_f.round(2)
-                @placeni_iznos += racun["placeni_iznos_racuna"].gsub(",", ".").to_f.round(2)
-                @neplaceni_iznos += (racun["iznos_racuna"].gsub(",", ".").to_f.round(2)+racun["iznos_pdv"].gsub(",", ".").to_f.round(2)) - racun["placeni_iznos_racuna"].to_f.round(2)
+              kupac.racuns.each do |racun|
+                next if racun.zaglavlje_id != @zaglavlje.id
+                @iznos_racuna += racun.iznos_racuna.to_f.round(2)
+                @iznos_pdva += racun.iznos_pdv.to_f.round(2)
+                @placeni_iznos += racun.placeni_iznos_racuna.to_f.round(2)
+                @neplaceni_iznos += (racun.iznos_racuna.to_f.round(2)+racun.iznos_pdv.to_f.round(2)) - racun.placeni_iznos_racuna.to_f.round(2)
               end
               @ukupan_iznos_pdv = @iznos_racuna+@iznos_pdva
               xml.K5 number_to_currency(@iznos_racuna, unit: "", separator: ".", delimiter: "")
@@ -207,21 +236,20 @@ class ExportXmlsController < ApplicationController
               @ukupno_placeni_iznos += @placeni_iznos
               @ukupno_neplaceni_iznos += @neplaceni_iznos
               xml.Racuni {
-                kupac["racuns_attributes"].values.each do |racun|
-                  next if racun["_destroy"] == "1"
+                kupac.racuns.each do |racun|
+                  next if racun.zaglavlje_id != @zaglavlje.id
                   xml.Racun {
                     xml.R1 @rb_racuna +=1
-                    xml.R2 racun["broj_izdanog_racuna"]
-                    xml.R3 Date.new(racun["datum_izdanog_racuna(1i)"].to_i, racun["datum_izdanog_racuna(2i)"].to_i, racun["datum_izdanog_racuna(3i)"].to_i)
-                    valuta_placanja_racuna = Date.new(racun["datum_izdanog_racuna(1i)"].to_i, racun["datum_izdanog_racuna(2i)"].to_i, racun["datum_izdanog_racuna(3i)"].to_i)
-                    xml.R4 valuta_placanja_racuna #Date.new(racun["valuta_placanja_racuna(1i)"].to_i, racun["valuta_placanja_racuna(2i)"].to_i, racun["valuta_placanja_racuna(3i)"].to_i)
-                    xml.R5 (@nisu_naplaceni_do - valuta_placanja_racuna).to_i #racun["broj_dana_kasnjenja"]
-                    r6 = number_to_currency(racun["iznos_racuna"], unit: "", separator: ".", delimiter: "")
+                    xml.R2 racun.broj_izdanog_racuna
+                    xml.R3 racun.datum_izdanog_racuna
+                    xml.R4 racun.valuta_placanja_racuna #Date.new(racun["valuta_placanja_racuna(1i)"].to_i, racun["valuta_placanja_racuna(2i)"].to_i, racun["valuta_placanja_racuna(3i)"].to_i)
+                    xml.R5 (@zaglavlje.nisu_naplaceni_do - racun.valuta_placanja_racuna).to_i #racun["broj_dana_kasnjenja"]
+                    r6 = number_to_currency(racun.iznos_racuna, unit: "", separator: ".", delimiter: "")
                     xml.R6 r6
-                    xml.R7 number_to_currency(racun["iznos_pdv"].gsub(",", "."), unit: "", separator: ".", delimiter: "")
-                    xml.R8 number_to_currency(racun["iznos_racuna"].gsub(",", ".").to_f+racun["iznos_pdv"].gsub(",", ".").to_f,unit: "", separator: ".", delimiter: "")
-                    xml.R9 number_to_currency(racun["placeni_iznos_racuna"].gsub(",", "."), unit: "", separator: ".", delimiter: "")
-                    xml.R10 number_to_currency((racun["iznos_racuna"].gsub(",", ".").to_f.round(2)+racun["iznos_pdv"].gsub(",", ".").to_f.round(2)) - racun["placeni_iznos_racuna"].gsub(",", ".").to_f.round(2),unit: "", separator: ".", delimiter: "")
+                    xml.R7 number_to_currency(racun.iznos_pdv, unit: "", separator: ".", delimiter: "")
+                    xml.R8 number_to_currency(racun.iznos_racuna.to_f+racun.iznos_pdv.to_f,unit: "", separator: ".", delimiter: "")
+                    xml.R9 number_to_currency(racun.placeni_iznos_racuna, unit: "", separator: ".", delimiter: "")
+                    xml.R10 number_to_currency((racun.iznos_racuna.to_f.round(2)+racun.iznos_pdv.to_f.round(2)) - racun.placeni_iznos_racuna.to_f.round(2),unit: "", separator: ".", delimiter: "")
                   }
                 end
               }
@@ -233,8 +261,8 @@ class ExportXmlsController < ApplicationController
           xml.UkupanIznosRacunaSPdvObrasca number_to_currency(@ukupan_iznos_racuna_s_pdv_obrasca, unit: "", separator: ".", delimiter: "")
           xml.UkupniPlaceniIznosRacunaObrasca number_to_currency(@ukupno_placeni_iznos, unit: "", separator: ".", delimiter: "")
           xml.NeplaceniIznosRacunaObrasca number_to_currency(@ukupno_neplaceni_iznos, unit: "", separator: ".", delimiter: "")
-          xml.OPZUkupanIznosRacunaSPdv !params[:zaglavlje]["opz_ukupan_iznos_racuna_s_pdv"].nil? ? number_to_currency(params[:zaglavlje]["opz_ukupan_iznos_racuna_s_pdv"].gsub(",", "."), unit: "", separator: ".", delimiter: "") : "0.00" #TODO upit u poreznu za što je to pošto nije pojašnjeno u dokumentaciji
-          xml.OPZUkupanIznosPdv !params[:zaglavlje]["opz_ukupan_iznos_pdv"].nil? ? number_to_currency(params[:zaglavlje]["opz_ukupan_iznos_pdv"].gsub(",", "."), unit: "", separator: ".", delimiter: "") : "0.00" #TODO - \\ -
+          xml.OPZUkupanIznosRacunaSPdv !@zaglavlje.opz_ukupan_iznos_racuna_s_pdv.nil? ? number_to_currency(@zaglavlje.opz_ukupan_iznos_racuna_s_pdv, unit: "", separator: ".", delimiter: "") : "0.00" #TODO upit u poreznu za što je to pošto nije pojašnjeno u dokumentaciji
+          xml.OPZUkupanIznosPdv !@zaglavlje.opz_ukupan_iznos_pdv.nil? ? number_to_currency(@zaglavlje.opz_ukupan_iznos_pdv, unit: "", separator: ".", delimiter: "") : "0.00" #TODO - \\ -
         }
       }
 
@@ -267,6 +295,51 @@ class ExportXmlsController < ApplicationController
         @obrazac.user_id = current_user.id
         @obrazac.save
 
+        @obrazac.racuns.each do |racun|
+          _racun = Racun.find(racun.id)
+          _racun.zaglavlje_id = @obrazac.id
+          _racun.save
+        end
+
+        params[:zaglavlje][:kupacs_attributes].values.each do |kupac|
+
+          next if kupac["_destroy"] == "1"
+
+          @kupac_zaglavlje = KupacZaglavlje.new()
+
+
+          puts "Id od kupca je "+kupac[:id]
+
+          @kupac_zaglavlje.kupac_id = kupac[:id]
+          @kupac_zaglavlje.zaglavlje_id = @obrazac.id
+          @kupac_zaglavlje.oznaka_poreznog_broja = kupac[:oznaka_poreznog_broja]
+          @kupac_zaglavlje.save
+
+          kupac[:racuns_attributes].values.each do |racun|
+            next if racun["_destroy"] == "1"
+            next if racun[:broj_izdanog_racuna] == nil
+
+            @kupac_racun = KupacRacun.new()
+
+            @racun = Racun.new()
+            @racun.zaglavlje_id = @obrazac.id
+            @racun.broj_izdanog_racuna = racun[:broj_izdanog_racuna]
+            @racun.iznos_racuna = racun[:iznos_racuna]
+            @racun.iznos_pdv = racun[:iznos_pdv]
+            @racun.placeni_iznos_racuna = racun[:placeni_iznos_racuna]
+            puts racun["datum_izdanog_racuna(1i)"]
+            @racun.datum_izdanog_racuna = Date.new(racun["datum_izdanog_racuna(1i)"].to_i, racun["datum_izdanog_racuna(2i)"].to_i, racun["datum_izdanog_racuna(3i)"].to_i)
+            @racun.valuta_placanja_racuna = Date.new(racun["valuta_placanja_racuna(1i)"].to_i, racun["valuta_placanja_racuna(2i)"].to_i, racun["valuta_placanja_racuna(3i)"].to_i)
+
+            @racun.save
+
+            @kupac_racun.racun_id = @racun.id
+            @kupac_racun.kupac_id = kupac[:id]
+            @kupac_racun.save
+          end
+
+        end
+
         #TODO izraditi posebnu formu za unos kupaca i izrada nove tablice "Zaglavljes_kupacs" radi optimizaranja baze
         #Kupac.check_duplicate_values() - problem kod postavljanja id-a od racuna i problem jer sadrzi id od zaglavlja
 
@@ -280,11 +353,9 @@ class ExportXmlsController < ApplicationController
 
   def destroy
     @obrazac = Zaglavlje.find(params[:id])
-    @kupci = Kupac.where(zaglavlje_id: params[:id])
-    @racuni = Racun.where(kupac_id: @kupci.ids)
 
-    @kupci.destroy_all
-    @racuni.destroy_all
+    @obrazac.racuns.destroy_all
+
     @obrazac.destroy
 
     flash[:notice] = "Obrazac je izbrisan!"
@@ -323,12 +394,13 @@ class ExportXmlsController < ApplicationController
   private
 
   def project_params
-    params.require(:zaglavlje).permit( :opz_ukupan_iznos_pdv, :opz_ukupan_iznos_racuna_s_pdv, :created_at, :updated_at,:oib, :naziv, :mjesto, :ulica, :broj, :email, :sastavio_ime, :sastavio_prezime, :sastavio_email, :sastavio_tel, :sastavio_fax ,:description, :datum_od, :datum_do, :na_dan, :nisu_naplaceni_do,
-                                       kupacs_attributes: [ :oznaka_poreznog_broja, :porezni_broj, :naziv_kupca, :zaglavlje_id, :creted_at, :updated_at ,:_destroy,
-                                       racuns_attributes: [:created_at, :updated_at, :iznos_racuna, :iznos_pdv, :placeni_iznos_racuna ,:kupac_id, :broj_izdanog_racuna, :broj_dana_kasnjenja, :datum_izdanog_racuna, :valuta_placanja_racuna, :_destroy]])
+    params.require(:zaglavlje).permit( :opz_ukupan_iznos_pdv, :opz_ukupan_iznos_racuna_s_pdv, :created_at, :updated_at,:oib, :naziv, :mjesto, :ulica, :broj, :email, :sastavio_ime, :sastavio_prezime, :sastavio_email, :sastavio_tel, :sastavio_fax ,:description, :datum_od, :datum_do, :na_dan, :nisu_naplaceni_do)
+
   end
 
-
+  def kupac_params
+    params.require(:zaglavlje).permit(kupacs_attributes: [ racuns_attributes: [:created_at, :updated_at, :iznos_racuna, :iznos_pdv, :placeni_iznos_racuna ,:kupac_id, :broj_izdanog_racuna, :broj_dana_kasnjenja, :datum_izdanog_racuna, :valuta_placanja_racuna, :_destroy]])
+  end
 
   def error_destroy(id)
     @obrazac = Zaglavlje.find(id)

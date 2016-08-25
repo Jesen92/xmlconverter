@@ -1,8 +1,13 @@
 class Zaglavlje < ActiveRecord::Base
-  has_many :kupacs
+  has_many :kupac_zaglavljes
+  has_many :kupacs, :through => :kupac_zaglavljes
+
+  has_many :racuns
+
   belongs_to :user
 
-  accepts_nested_attributes_for :kupacs, allow_destroy: true
+  accepts_nested_attributes_for :kupacs, reject_if: :all_blank
+  accepts_nested_attributes_for :racuns, reject_if: :all_blank
 
   def self.import_xlsx(file, user_id)
     puts "usao je u import_xlsx"

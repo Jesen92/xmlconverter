@@ -36,6 +36,9 @@ gem 'dotenv-rails'
 
 gem 'gon'
 
+gem "compass-rails", github: "Compass/compass-rails", branch: "master"
+gem 'chosen-rails'
+
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
