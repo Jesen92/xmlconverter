@@ -8,6 +8,7 @@ class KupacsController < ApplicationController
   def show
     @kupac = Kupac.find(params[:id])
 
+    @racuns_grid = initialize_grid(@kupac.racuns, include: [ :kupacs, {zaglavlje: :user} ], order: 'racuns.created_at', order_direction: 'desc')
   end
 
   def new

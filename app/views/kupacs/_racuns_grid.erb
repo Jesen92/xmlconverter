@@ -1,0 +1,43 @@
+<%= grid(@racuns_grid, show_filters: :always) do |g|
+
+  g.column name: 'Id', attribute: 'id', filter: false do |t|
+    t.id
+  end
+
+  g.column name: 'Broj račua', attribute: 'broj_izdanog_racuna' do |t|
+    t.broj_izdanog_racuna
+  end
+
+  g.column name: 'Datum računa', attribute: 'datum_izdanog_racuna', :filter => :jquery_datepicker do |t|
+    t.datum_izdanog_racuna
+  end
+
+  g.column name: 'Broj dana kašnjenja', attribute: 'nisu_naplaceni_do', :assoc => :zaglavlje do |t|
+    (t.zaglavlje.nisu_naplaceni_do - t.valuta_placanja_racuna).to_i
+  end
+
+  g.column name: 'Kreirano', attribute: 'created_at', :filter => :jquery_datepicker do |t|
+    t.created_at.strftime("%d.%m.%Y. %H:%M")
+  end
+
+  g.column name: 'Izmijenjeno', attribute: 'updated_at', :filter => :jquery_datepicker do |t|
+    t.updated_at.strftime("%d.%m.%Y. %H:%M")
+  end
+
+  g.column name: 'Naziv obrasca', attribute: 'naziv', :assoc => :zaglavlje do |t|
+    t.zaglavlje.naziv
+  end
+
+  g.column name: 'Izradio obrazac', attribute: 'naziv', :assoc => :zaglavlje do |t|
+    if t.zaglavlje.user != nil
+      t.zaglavlje.user.name+" "+t.zaglavlje.user.surname
+    else
+      "Korisnik ne postoji"
+    end
+  end
+
+  g.column do |t|
+    link_to("Uredi obrazac", export_xmls_edit_path(id: t.zaglavlje.id), :method => :get)
+  end
+
+end -%>

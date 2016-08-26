@@ -321,8 +321,11 @@ class ExportXmlsController < ApplicationController
 
             @kupac_racun = KupacRacun.new()
 
-            @racun = Racun.new()
+            @racun = Racun.new(racun.except(:_destroy))
             @racun.zaglavlje_id = @obrazac.id
+
+=begin
+            sve se riješava parametrima 'racun'
             @racun.broj_izdanog_racuna = racun[:broj_izdanog_racuna]
             @racun.iznos_racuna = racun[:iznos_racuna]
             @racun.iznos_pdv = racun[:iznos_pdv]
@@ -330,6 +333,7 @@ class ExportXmlsController < ApplicationController
             puts racun["datum_izdanog_racuna(1i)"]
             @racun.datum_izdanog_racuna = Date.new(racun["datum_izdanog_racuna(1i)"].to_i, racun["datum_izdanog_racuna(2i)"].to_i, racun["datum_izdanog_racuna(3i)"].to_i)
             @racun.valuta_placanja_racuna = Date.new(racun["valuta_placanja_racuna(1i)"].to_i, racun["valuta_placanja_racuna(2i)"].to_i, racun["valuta_placanja_racuna(3i)"].to_i)
+=end
 
             @racun.save
 
@@ -337,7 +341,7 @@ class ExportXmlsController < ApplicationController
             @kupac_racun.kupac_id = kupac[:id]
             @kupac_racun.save
           end
-
+lo
         end
 
         #TODO izraditi posebnu formu za unos kupaca i izrada nove tablice "Zaglavljes_kupacs" radi optimizaranja baze
@@ -399,7 +403,7 @@ class ExportXmlsController < ApplicationController
   end
 
   def kupac_params
-    params.require(:zaglavlje).permit(kupacs_attributes: [ racuns_attributes: [:created_at, :updated_at, :iznos_racuna, :iznos_pdv, :placeni_iznos_racuna ,:kupac_id, :broj_izdanog_racuna, :broj_dana_kasnjenja, :datum_izdanog_racuna, :valuta_placanja_racuna, :_destroy]])
+    params.require(:zaglavlje).permit(kupacs_attributes: [ racuns_attributes: [:created_at, :updated_at, :iznos_racuna, :iznos_pdv, :placeni_iznos_racuna ,:kupac_id, :broj_izdanog_racuna, :broj_dana_kasnjenja, :datum_izdanog_racuna, :valuta_placanja_racuna]])
   end
 
   def error_destroy(id)

@@ -12,22 +12,23 @@
   <div class="panel-collapse collapse in" id="<%= f.object.id? ? "kupac"+f.object.id.to_s : "collapse123" %>">
 <div class="container">
   <!--
-  <%= f.input :naziv_kupca %>
+  <%= f.input :naziv_kupca , required: true%>
   <div class="row">
     <div class="col-md-6 input_pad">
-    <% if f.object.oznaka_poreznog_broja? %>
-      <%= f.input :oznaka_poreznog_broja ,collection: ([["OIB kupca", 1], ["PDV identifikacijski broj", 2], ["Ostali porezni brojevi", 3]]),
-                selected: f.object.oznaka_poreznog_broja %>
-    <% else %>
-        <%= f.input :oznaka_poreznog_broja ,collection: ([["OIB kupca", 1], ["PDV identifikacijski broj", 2], ["Ostali porezni brojevi", 3]]),
-                    selected: 1 %>
-    <% end %>
+
     </div>
     <div class="col-md-6 input_pad"><%= f.input :porezni_broj %></div>
   </div> -->
 
-    <%= f.input :id, :as => :select, :collection => Kupac.all.map {|kupac| [kupac.naziv_kupca, kupac.id]}, class:"chosen-select" %>
-    <%= f.input :oznaka_poreznog_broja ,collection: ([["OIB kupca", 1], ["PDV identifikacijski broj", 2], ["Ostali porezni brojevi", 3]]), selected: 1 %>
+    <%= f.input :id, :as => :select, :collection => Kupac.all.map {|kupac| [kupac.naziv_kupca, kupac.id]}, class:"chosen-select" , required: true%>
+
+    <% if f.object.oznaka_poreznog_broja? %>
+        <%= f.input :oznaka_poreznog_broja ,collection: ([["OIB kupca", 1], ["PDV identifikacijski broj", 2], ["Ostali porezni brojevi", 3]]),
+                    selected: f.object.oznaka_poreznog_broja %>
+    <% else %>
+        <%= f.input :oznaka_poreznog_broja ,collection: ([["OIB kupca", 1], ["PDV identifikacijski broj", 2], ["Ostali porezni brojevi", 3]]),
+                    selected: 1 %>
+    <% end %>
 
     <div id="racuns" style="margin-top: 20px">
       <%= f.simple_fields_for :racuns, html: {multipart: true} do |racun| %>

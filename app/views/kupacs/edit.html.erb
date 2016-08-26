@@ -1,2 +1,15 @@
-<h1>Kupacs#edit</h1>
-<p>Find me in app/views/kupacs/edit.html.erb</p>
+<div class="page-header head-page">
+  <h1>Uredi Kupac</h1>
+</div>
+
+<%= simple_form_for @kupac, html: {class: 'form-horizontal', multipart: true} do |f| %>
+    <%= f.input :naziv_kupca, required: true %>
+
+    <div class="row">
+      <div class="col-md-4 input_pad"><%= f.input :porezni_broj, required: true %></div>
+      <div class="col-md-4 input_pad"><%= f.input :pdv_identifikacijski_broj %></div>
+      <div class="col-md-4 input_pad"v><%= f.input :ostali_brojevi %></div>
+    </div>
+
+    <%= f.button :submit, value: "Izmijeni Kupca", class: "btn btn-success", :method => :put %> <%= link_to "Prekid unosa", export_xmls_index_path, class: "btn btn-warning pull-right", data: { confirm: 'Jeste li sigurni da želite prekid unosa?' } %>
+<% end %>
