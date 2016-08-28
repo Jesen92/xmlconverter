@@ -18,6 +18,8 @@
 
 @import "bootstrap-sprockets";
 @import "bootstrap";
+@import "chosen";
+@import "bootstrap-chosen";
 @import "wice_grid";
 @import "font-awesome-sprockets";
 @import "font-awesome";
@@ -48,4 +50,8 @@
 .white_background:hover {
   cursor: pointer;
   background: lightgrey;
+}
+
+.chosen-container-single {
+  width: 100% !important;
 }

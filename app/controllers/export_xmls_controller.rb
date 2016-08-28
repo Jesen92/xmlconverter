@@ -408,10 +408,8 @@ lo
 
   def error_destroy(id)
     @obrazac = Zaglavlje.find(id)
-    @kupci = Kupac.where(zaglavlje_id: id)
-    @racuni = Racun.where(kupac_id: @kupci.ids)
+    @racuni = Racun.where(zaglavlje_id: id)
 
-    @kupci.destroy_all
     @racuni.destroy_all
     @obrazac.destroy
   end

@@ -35,8 +35,12 @@ class Zaglavlje < ActiveRecord::Base
     (2..kupci.last_row).each do |i|
       @error_red = i.to_s
       row = Hash[[kupci_header, kupci.row(i)].transpose]
+
       article = Kupac.new   #find_by_id(row["id"]) || - ako ce se mijenjati vrijednosti preko excel tablica
       article.attributes = row.to_hash.slice(*row.to_hash.keys)
+
+      next if !self.check_if_duplicates(article)
+
       article.zaglavlje_id = @zaglavlje_id #postavljanje id-a od kreiranog zaglavlja
 
       article.save!
@@ -53,15 +57,26 @@ class Zaglavlje < ActiveRecord::Base
       article = Racun.new   #find_by_id(row["id"]) || - ako ce se mijenjati vrijednosti preko excel tablica
       article.attributes = row.to_hash.slice(*row.to_hash.keys)
 
-      article.kupac_id = @kupci[article.porezni_broj_kupca]
+      @kupac = Kupac.where("porezni_broj = ? OR pdv_identifikacijski_broj = ? OR ostali_brojevi = ?",article.porezni_broj_kupca, article.porezni_broj_kupca, article.porezni_broj_kupca)
 
+      if @kupac.empty? || @kupac.nil?
+        return "Pogreška! Ne postoji kupac u bazi sa poreznim brojem #{article.porezni_broj_kupca}!", @zaglavlje_id
+      end
+
+      if KupacZaglavlje.where(kupac_id: @kupac.ids.first, zaglavlje_id: @zaglavlje_id).empty?
+        KupacZaglavlje.create(kupac_id: @kupac.ids.first, zaglavlje_id: @zaglavlje_id)
+      end
+
+      article.zaglavlje_id = @zaglavlje_id
       article.save!
+
+      KupacRacun.create(kupac_id: @kupac.ids.first, racun_id: article.id)
     end
 
     return "Ispravno", @zaglavlje_id.to_s
 
-  rescue => e
-    return "Pogreška u listi '#{@error_log}'\nPogreška se nalazi u redu broj #{@error_red} ili u zaglavlju te liste!\nError message: #{e.message}", @zaglavlje_id
+  #rescue => e
+  #  return "Pogreška u listi '#{@error_log}'\nPogreška se nalazi u redu broj #{@error_red} ili u zaglavlju te liste!\nError message: #{e.message}", @zaglavlje_id
   end
 
   def self.open_spreadsheet(file)
@@ -74,6 +89,20 @@ class Zaglavlje < ActiveRecord::Base
     end
   end
 
+  def self.check_if_duplicates(_kupac)
+
+    Kupac.all.each do |kupac|
+      if kupac.porezni_broj == _kupac.porezni_broj
+        return false
+      elsif !kupac.pdv_identifikacijski_broj.nil? && kupac.pdv_identifikacijski_broj == _kupac.pdv_identifikacijski_broj
+        return false
+      elsif !kupac.ostali_brojevi.nil? &&  kupac.ostali_brojevi == kupac.ostali_brojevi
+        return false
+      end
+    end
+
+    true
+  end
 
 
 end

@@ -13,10 +13,16 @@ class KupacsController < ApplicationController
 
   def new
     @kupac = Kupac.new
-
   end
 
   def create
+    @poruka = Kupac.check_if_duplicate(params[:kupac])
+
+    if @poruka != false
+     flash[:alert] = @poruka
+     return redirect_to(:back)
+    end
+
     @kupac = Kupac.new(kupac_params)
     @kupac.user_id = current_user.id
     @kupac.save

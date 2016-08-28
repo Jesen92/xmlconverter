@@ -36,6 +36,8 @@ gem 'dotenv-rails'
 
 gem 'gon'
 
+gem 'bootstrap-chosen-rails'
+
 gem "compass-rails", github: "Compass/compass-rails", branch: "master"
 gem 'chosen-rails'
 
