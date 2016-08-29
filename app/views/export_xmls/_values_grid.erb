@@ -45,7 +45,7 @@
   end
 
   g.column do |t|
-    link_to("Generiraj Izvješće", generate_pdf_show_path(id: t.id, format: :pdf, :status => 301), :method => :get, :targer => "_blank" )
+    link_to("Generiraj Izvješće", generate_pdf_show_path(id: t.id, format: :pdf, :status => 301), :method => :get, :target => "_blank" )
   end
 
   g.column do |t|

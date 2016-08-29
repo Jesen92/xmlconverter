@@ -13,7 +13,7 @@
   table {
     border-spacing: 0;
     border-collapse: collapse;
-    font-size: 70%;
+    font-size: 80%;
   }
 
   .naziv {
@@ -38,9 +38,23 @@
     font-family: "Arial";
   }
 
-  .tablica-header {
+  .tablica-header-top {
+    font-family: "Arial";
     font-weight: bold;
     text-align: center;
+    padding: 7px 7px 7px 7px;
+  }
+
+  .tablica-header-currency {
+    text-align: right !important;
+    font-family: "Arial";
+    padding: 7px 7px 7px 7px;
+  }
+
+  .tablica-header {
+    font-family: "Arial";
+    text-align: center;
+    padding: 7px 7px 7px 7px;
   }
 </style>
 
@@ -71,7 +85,6 @@
     <td class="naziv-header">PODACI O DOSPJELIM, A NENAPLAĆENM RAČUNIMA KOJI SU IZDANI SUKLADNO ODREDBAMA ZAKONA O PDV-U</td>
   </tr>
 </table>
-
 <table border="1" style="width:100%; margin-top: 5px;">
   <tr>
     <td class="naziv">R.B.</td>
@@ -90,19 +103,131 @@
     <td class="naziv">NEPLAĆENI DIO RAČUNA</td>
   </tr>
   <tr>
-    <td class="tablica-header">1</td>
-    <td class="tablica-header">2</td>
-    <td class="tablica-header">3</td>
-    <td class="tablica-header">4</td>
-    <td class="tablica-header">5</td>
-    <td class="tablica-header">6</td>
-    <td class="tablica-header">7</td>
-    <td class="tablica-header">8</td>
-    <td class="tablica-header">9</td>
-    <td class="tablica-header">10</td>
-    <td class="tablica-header">11</td>
-    <td class="tablica-header">12(10+11)</td>
-    <td class="tablica-header">13</td>
-    <td class="tablica-header">14(12-13)</td>
+    <td class="tablica-header-top">1</td>
+    <td class="tablica-header-top">2</td>
+    <td class="tablica-header-top">3</td>
+    <td class="tablica-header-top">4</td>
+    <td class="tablica-header-top">5</td>
+    <td class="tablica-header-top">6</td>
+    <td class="tablica-header-top">7</td>
+    <td class="tablica-header-top">8</td>
+    <td class="tablica-header-top">9</td>
+    <td class="tablica-header-top">10</td>
+    <td class="tablica-header-top">11</td>
+    <td class="tablica-header-top">12(10+11)</td>
+    <td class="tablica-header-top">13</td>
+    <td class="tablica-header-top">14(12-13)</td>
+  </tr>
+  <% @obrazac.kupacs.each do |kupac| %>
+  <tr>
+    <td class="tablica-header"><%= @rb_kupca %></td>
+    <% @oznaka_poreznog_broja = KupacZaglavlje.find_by(kupac_id: kupac.id, zaglavlje_id: @obrazac.id).oznaka_poreznog_broja %>
+    <% puts "Oznaka porr: "+@oznaka_poreznog_broja.to_s %>
+    <% if @oznaka_poreznog_broja == 1 %>
+        <% @porezni_broj = kupac.porezni_broj %>
+        <td class="tablica-header">1 OIB</td>
+    <% elsif @oznaka_poreznog_broja == 2 %>
+        <% @porezni_broj = kupac.pdv_identifikacijski_broj %>
+        <td class="tablica-header">2 PDV IDENTIFIKACIJSKI BROJ</td>
+    <% elsif @oznaka_poreznog_broja == 3 %>
+        <% @porezni_broj = kupac.ostali_brojevi %>
+        <td class="tablica-header">3 OSTALI BROJEVI</td>
+    <% end %>
+    <% kupac.racuns.each_with_index { |racun, i|
+      next if racun.zaglavlje_id != @obrazac.id
+      @i = i
+      break
+    } %>
+    <% puts "Brojac je: "+@i.to_s %>
+    <td class="tablica-header"><%= @porezni_broj %></td>
+    <td class="tablica-header"><%= kupac.naziv_kupca %></td>
+    <td class="tablica-header"><%= @rb_racuna %></td>
+    <td class="tablica-header"><%= kupac.racuns.offset(@i).first.broj_izdanog_racuna %></td>
+    <td class="tablica-header"><%= kupac.racuns.offset(@i).first.datum_izdanog_racuna.strftime("%d.%m.%Y.") %></td>
+    <td class="tablica-header"><%= kupac.racuns.offset(@i).first.valuta_placanja_racuna.strftime("%d.%m.%Y.") %></td>
+    <td class="tablica-header"><%= (@obrazac.nisu_naplaceni_do - kupac.racuns.offset(@i).first.valuta_placanja_racuna).to_i %></td>
+    <td class="tablica-header-currency"><%= number_to_currency(kupac.racuns.offset(@i).first.iznos_racuna, unit: "", separator: ",", delimiter: "") %></td><% @iznos_racuna += kupac.racuns.offset(@i).first.iznos_racuna %>
+    <td class="tablica-header-currency"><%= number_to_currency(kupac.racuns.offset(@i).first.iznos_pdv, unit: "", separator: ",", delimiter: "") %></td><% @iznos_pdv += kupac.racuns.offset(@i).first.iznos_pdv %>
+    <td class="tablica-header-currency"><%= number_to_currency(ukupan_iznos = kupac.racuns.offset(@i).first.iznos_racuna + kupac.racuns.offset(@i).first.iznos_pdv, unit: "", separator: ",", delimiter: "")  %></td><% @ukupan_iznos_racuna_s_pdv += ukupan_iznos %>
+    <td class="tablica-header-currency"><%= number_to_currency(kupac.racuns.offset(@i).first.placeni_iznos_racuna, unit: "", separator: ",", delimiter: "") %></td><% @placeni_iznos_racuna += kupac.racuns.offset(@i).first.placeni_iznos_racuna %>
+    <td class="tablica-header-currency"><%= number_to_currency(ukupan_iznos - kupac.racuns.offset(@i).first.placeni_iznos_racuna, unit: "", separator: ",", delimiter: "") %></td><% @neplaceni_dio_racuna += ukupan_iznos - kupac.racuns.offset(@i).first.placeni_iznos_racuna %>
+  </tr>
+      <% @rb_racuna += 1 %>
+    <% kupac.racuns[@i+1..-1].each do |racun| %>
+          <% next if racun.zaglavlje_id != @obrazac.id %>
+      <tr>
+        <td class="tablica-header"><%= @rb_kupca %></td>
+        <td class="tablica-header"></td>
+        <td class="tablica-header"></td>
+        <td class="tablica-header"></td>
+        <td class="tablica-header"><%= @rb_racuna %></td>
+        <td class="tablica-header"><%= racun.broj_izdanog_racuna %></td>
+        <td class="tablica-header"><%= racun.datum_izdanog_racuna.strftime("%d.%m.%Y.") %></td>
+        <td class="tablica-header"><%= racun.valuta_placanja_racuna.strftime("%d.%m.%Y.") %></td>
+        <td class="tablica-header"><%= (@obrazac.nisu_naplaceni_do - racun.valuta_placanja_racuna).to_i %></td>
+        <td class="tablica-header-currency"><%= number_to_currency(racun.iznos_racuna, unit: "", separator: ",", delimiter: "") %></td><% @iznos_racuna += racun.iznos_racuna %>
+        <td class="tablica-header-currency"><%= number_to_currency(racun.iznos_pdv, unit: "", separator: ",", delimiter: "") %></td><% @iznos_pdv += racun.iznos_pdv %>
+        <td class="tablica-header-currency"><%= number_to_currency(ukupan_iznos = racun.iznos_racuna + racun.iznos_pdv, unit: "", separator: ",", delimiter: "") %></td><% @ukupan_iznos_racuna_s_pdv += ukupan_iznos %>
+        <td class="tablica-header-currency"><%= number_to_currency(racun.placeni_iznos_racuna, unit: "", separator: ",", delimiter: "") %></td><% @placeni_iznos_racuna += racun.placeni_iznos_racuna %>
+        <td class="tablica-header-currency"><%= number_to_currency(ukupan_iznos - racun.placeni_iznos_racuna, unit: "", separator: ",", delimiter: "") %></td><% @neplaceni_dio_racuna += ukupan_iznos - racun.placeni_iznos_racuna %>
+      </tr>
+          <% @rb_racuna += 1 %>
+    <% end %>
+      <% @ukupno_iznos_racuna += @iznos_racuna %>
+      <% @ukupno_iznos_pdv += @iznos_pdv %>
+      <% @ukupno_ukupan_iznos_racuna_s_pdv += @ukupan_iznos_racuna_s_pdv %>
+      <% @ukupno_placeni_iznos_racuna += @placeni_iznos_racuna %>
+      <% @ukupno_neplaceni_dio_racuna += @neplaceni_dio_racuna %>
+      <tr>
+        <td class="tablica-header"><%= @rb_kupca %></td>
+        <td class="tablica-header"></td>
+        <td class="tablica-header"></td>
+        <td class="tablica-header"></td>
+        <td class="tablica-header">Ukupno</td>
+        <td class="tablica-header"></td>
+        <td class="tablica-header"></td>
+        <td class="tablica-header"></td>
+        <td class="tablica-header"></td>
+        <td class="tablica-header-currency"><%= number_to_currency(@iznos_racuna, unit: "", separator: ",", delimiter: "") %></td>
+        <td class="tablica-header-currency"><%= number_to_currency(@iznos_pdv, unit: "", separator: ",", delimiter: "") %></td>
+        <td class="tablica-header-currency"><%= number_to_currency(@ukupan_iznos_racuna_s_pdv, unit: "", separator: ",", delimiter: "") %></td>
+        <td class="tablica-header-currency"><%= number_to_currency(@placeni_iznos_racuna, unit: "", separator: ",", delimiter: "") %></td>
+        <td class="tablica-header-currency"><%= number_to_currency(@neplaceni_dio_racuna, unit: "", separator: ",", delimiter: "") %></td>
+        <% @iznos_racuna = 0 %><% @iznos_pdv = 0 %><% @ukupan_iznos_racuna_s_pdv = 0 %><% @placeni_iznos_racuna = 0 %><% @neplaceni_dio_racuna = 0 %>
+      </tr>
+      <% @rb_kupca += 1 %>
+      <% @rb_racuna = 1 %>
+  <% end %>
+  <tr>
+    <td class="tablica-header" colspan="8"></td>
+    <td class="tablica-header-top">UKUPNO:</td>
+    <td class="tablica-header-top"><%= number_to_currency(@ukupno_iznos_racuna, unit: "", separator: ",", delimiter: "") %></td>
+    <td class="tablica-header-top"><%= number_to_currency(@ukupno_iznos_pdv, unit: "", separator: ",", delimiter: "") %></td>
+    <td class="tablica-header-top"><%= number_to_currency(@ukupno_ukupan_iznos_racuna_s_pdv, unit: "", separator: ",", delimiter: "") %></td>
+    <td class="tablica-header-top"><%= number_to_currency(@ukupno_placeni_iznos_racuna, unit: "", separator: ",", delimiter: "") %></td>
+    <td class="tablica-header-top"><%= number_to_currency(@ukupno_neplaceni_dio_racuna, unit: "", separator: ",", delimiter: "") %></td>
+  </tr>
+  <tr>
+    <td colspan="14" style="padding-left: 35px;">III. PODACI O UKUPNO DOSPJELIM, A NENAPLAĆENIM RAČUNIMA KOJI SU IZDANI SUKLADNO ODREDBAMA OPZ-a</td>
+  </tr>
+  <tr>
+    <td class="tablica-header">r.b.</td>
+    <td class="tablica-header" colspan="7">UKUPAN IZNOS RAČUNA SA PDV-om</td>
+    <td class="tablica-header" colspan="6">IZNOS PDV-a</td>
+  </tr>
+  <tr>
+    <td class="tablica-header">1.</td>
+    <td class="tablica-header" colspan="7">2.</td>
+    <td class="tablica-header" colspan="6">3.</td>
+  </tr>
+  <tr>
+    <td class="tablica-header">1.</td>
+    <td class="tablica-header" colspan="7"><%= @obrazac.opz_ukupan_iznos_racuna_s_pdv.nil? ? "0,00" : number_to_currency(@obrazac.opz_ukupan_iznos_racuna_s_pdv, unit: "", separator: ",", delimiter: "") %></td>
+    <td class="tablica-header" colspan="6"><%= @obrazac.opz_ukupan_iznos_pdv.nil? ? "0,00" : number_to_currency(@obrazac.opz_ukupan_iznos_pdv, unit: "", separator: ",", delimiter: "") %></td>
+  </tr>
+  <tr>
+    <td class="naziv-header" colspan="5">IV. Datum: <%= @obrazac.created_at.strftime("%d.%m.%Y.") %></td>
+    <td class="naziv-header" colspan="5">V. Obračun sastavio (ime i prezime): <%= @obrazac.user.name+" "+@obrazac.user.surname %></td>
+    <td class="naziv-header" colspan="4">VI. Potpis:</td>
   </tr>
 </table>
