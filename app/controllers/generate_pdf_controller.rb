@@ -22,7 +22,7 @@ class GeneratePdfController < ApplicationController
     respond_to do |format|
         format.html
         format.pdf do
-          render pdf: "file_name" , :template => 'generate_pdf/show.html.erb',  # Excluding ".pdf" extension.
+          render pdf: "OPZ-STAT-1 Izvješće "+@obrazac.created_at.strftime("%d.%m.%Y") , :template => 'generate_pdf/show.html.erb',  # Excluding ".pdf" extension.
                  orientation: 'Landscape'
         end
     end
