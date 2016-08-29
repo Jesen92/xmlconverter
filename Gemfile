@@ -41,6 +41,11 @@ gem 'bootstrap-chosen-rails'
 gem "compass-rails", github: "Compass/compass-rails", branch: "master"
 gem 'chosen-rails'
 
+########################### za kreiranje iz html-a u pdf
+gem 'wicked_pdf'
+gem 'wkhtmltopdf-binary'
+###########################
+
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks

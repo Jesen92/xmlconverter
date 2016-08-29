@@ -1,0 +1,108 @@
+<meta charset="utf-8" />
+<style>
+  td {
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+  }
+
+  .naziv-header {
+    padding-left: 15px;
+  }
+
+  table {
+    border-spacing: 0;
+    border-collapse: collapse;
+    font-size: 70%;
+  }
+
+  .naziv {
+    text-align: center;
+    padding: 5px 5px 5px 5px;
+    font-weight: 500;
+    font-family: "Arial";
+  }
+
+  .naziv-top {
+    text-align: center;
+    margin-top: 2px;
+  }
+
+  .naziv-header {
+    font-family: "Arial";
+  }
+
+  .num {
+    width: 7%;
+    text-align: center;
+    font-family: "Arial";
+  }
+
+  .tablica-header {
+    font-weight: bold;
+    text-align: center;
+  }
+</style>
+
+<div class="naziv-top">
+<h3>STATISTIČKO IZVJEŠĆE</h3>
+<p>O DOSPJELIIM, A NENAPLAĆENIM RAČUNIMA NA DAN <%= @obrazac.na_dan.strftime("%d.%m.%Y.") %> god. KOJI NISU NAPLAĆENI DO <%= @obrazac.nisu_naplaceni_do.strftime("%d.%m.%Y.") %> god.</p>
+</div>
+
+<table border="1" style="width:100%">
+  <tr>
+    <td class="naziv-header num">I.</td>
+    <td class="naziv-header">PODACI O POREZNOM OBVEZNKU/PODNOSITELJU IZVJEŠĆA</td>
+  </tr>
+  <tr>
+    <td class="naziv-header num">1.</td>
+    <td class="naziv-header">NAZIV/IME I PREZIME: <%= @obrazac.naziv %></td>
+  </tr>
+  <tr>
+    <td class="naziv-header num">2.</td>
+    <td class="naziv-header">OIB: <%= @obrazac.oib %></td>
+  </tr>
+  <tr>
+    <td class="naziv-header num">3.</td>
+    <td class="naziv-header">ADRESA: <%= @obrazac.ulica+" "+@obrazac.broj+", "+@obrazac.mjesto %></td>
+  </tr>
+  <tr>
+    <td class="naziv-header num">II.</td>
+    <td class="naziv-header">PODACI O DOSPJELIM, A NENAPLAĆENM RAČUNIMA KOJI SU IZDANI SUKLADNO ODREDBAMA ZAKONA O PDV-U</td>
+  </tr>
+</table>
+
+<table border="1" style="width:100%; margin-top: 5px;">
+  <tr>
+    <td class="naziv">R.B.</td>
+    <td class="naziv">OZNAKA POREZNOG BROJA</td>
+    <td class="naziv">POREZNI BROJ</td>
+    <td class="naziv">NAZIV/IME I PREZIME KUPCA</td>
+    <td class="naziv">R.B. RAČUNA</td>
+    <td class="naziv">BROJ IZDANOG RAČUNA</td>
+    <td class="naziv">DATUM IZDANOG RAČUNA</td>
+    <td class="naziv">VALUTA PLAĆANJA RAČUNA</td>
+    <td class="naziv">BROJ DANA KAŠNJENJA U PLAĆANJU</td>
+    <td class="naziv">IZNOS RAČUNA</td>
+    <td class="naziv">IZNOS PDV-a</td>
+    <td class="naziv">UKUPAN IZNOS RAČUNA SA PDV-om</td>
+    <td class="naziv">PLAĆENI IZNOS RAČUNA</td>
+    <td class="naziv">NEPLAĆENI DIO RAČUNA</td>
+  </tr>
+  <tr>
+    <td class="tablica-header">1</td>
+    <td class="tablica-header">2</td>
+    <td class="tablica-header">3</td>
+    <td class="tablica-header">4</td>
+    <td class="tablica-header">5</td>
+    <td class="tablica-header">6</td>
+    <td class="tablica-header">7</td>
+    <td class="tablica-header">8</td>
+    <td class="tablica-header">9</td>
+    <td class="tablica-header">10</td>
+    <td class="tablica-header">11</td>
+    <td class="tablica-header">12(10+11)</td>
+    <td class="tablica-header">13</td>
+    <td class="tablica-header">14(12-13)</td>
+  </tr>
+</table>

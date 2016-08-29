@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  get 'generate_pdf/show'
+
   get 'kupacs/new'
 
   get 'kupacs/create'
@@ -64,6 +66,7 @@ Rails.application.routes.draw do
     get :download_xlsx_primjer, on: :collection
   end
     resources :kupacs
+    resources :generate_pdf
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

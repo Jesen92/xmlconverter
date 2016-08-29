@@ -45,13 +45,15 @@
   end
 
   g.column do |t|
-    if t.user_id == current_user.id || !t.zakljucano_uredivanje? || current_user.role == "Admin"
-      link_to("Uredi", export_xmls_edit_path(id: t.id), :method => :get)
-    end
+    link_to("Generiraj Izvješće", generate_pdf_show_path(id: t.id, format: :pdf, :status => 301), :method => :get, :targer => "_blank" )
   end
 
   g.column do |t|
-    if t.user_id == current_user.id || !t.zakljucano_brisanje? || current_user.role == "Admin"
+    if t.user_id == current_user.id || !t.zakljucano_uredivanje? || !t.zakljucano_brisanje? || current_user.role == "Admin"
+      link_to('Uredi', export_xmls_edit_path(id: t.id), :method => :get)+" / "+link_to('Izbriši', export_xml_path(t.id), method: :delete, data: { confirm: 'Jeste li sigurni?' })
+    elsif t.user_id == current_user.id || !t.zakljucano_uredivanje? || current_user.role == "Admin"
+      link_to('Uredi', export_xmls_edit_path(id: t.id), :method => :get)
+    elsif t.user_id == current_user.id || !t.zakljucano_brisanje? || current_user.role == "Admin"
       link_to('Izbriši', export_xml_path(t.id), method: :delete, data: { confirm: 'Jeste li sigurni?' })
     end
   end

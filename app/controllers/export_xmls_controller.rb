@@ -321,7 +321,7 @@ class ExportXmlsController < ApplicationController
 
             @kupac_racun = KupacRacun.new()
 
-            @racun = Racun.new(racun.except(:_destroy))
+            @racun = Racun.new(racun.except(:id,:_destroy))
             @racun.zaglavlje_id = @obrazac.id
 
 =begin
@@ -341,7 +341,6 @@ class ExportXmlsController < ApplicationController
             @kupac_racun.kupac_id = kupac[:id]
             @kupac_racun.save
           end
-lo
         end
 
         #TODO izraditi posebnu formu za unos kupaca i izrada nove tablice "Zaglavljes_kupacs" radi optimizaranja baze

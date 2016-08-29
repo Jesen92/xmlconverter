@@ -59,12 +59,23 @@ class Zaglavlje < ActiveRecord::Base
 
       @kupac = Kupac.where("porezni_broj = ? OR pdv_identifikacijski_broj = ? OR ostali_brojevi = ?",article.porezni_broj_kupca, article.porezni_broj_kupca, article.porezni_broj_kupca)
 
+      if Kupac.find_by(porezni_broj: article.porezni_broj_kupca)
+        @kupac = Kupac.find_by(porezni_broj: article.porezni_broj_kupca)
+        @oznaka_poreznog_broja = 1
+      elsif Kupac.find_by(pdv_identifikacijski_broj: article.porezni_broj_kupca)
+        @kupac = Kupac.find_by(pdv_identifikacijski_broj: article.porezni_broj_kupca)
+        @oznaka_poreznog_broja = 2
+      elsif Kupac.find_by(osali_brojevi: article.porezni_broj_kupca)
+        @kupac = Kupac.find_by(ostali_brojevi: article.porezni_broj_kupca)
+        @oznaka_poreznog_broja = 3
+      end
+
       if @kupac.empty? || @kupac.nil?
         return "Pogreška! Ne postoji kupac u bazi sa poreznim brojem #{article.porezni_broj_kupca}!", @zaglavlje_id
       end
 
       if KupacZaglavlje.where(kupac_id: @kupac.ids.first, zaglavlje_id: @zaglavlje_id).empty?
-        KupacZaglavlje.create(kupac_id: @kupac.ids.first, zaglavlje_id: @zaglavlje_id)
+        KupacZaglavlje.create(kupac_id: @kupac.ids.first, zaglavlje_id: @zaglavlje_id, oznaka_poreznog_broja: @oznaka_poreznog_broja)
       end
 
       article.zaglavlje_id = @zaglavlje_id
