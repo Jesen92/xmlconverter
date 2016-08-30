@@ -70,18 +70,18 @@ class Zaglavlje < ActiveRecord::Base
         @oznaka_poreznog_broja = 3
       end
 
-      if @kupac.empty? || @kupac.nil?
+      if @kupac.nil?
         return "Pogreška! Ne postoji kupac u bazi sa poreznim brojem #{article.porezni_broj_kupca}!", @zaglavlje_id
       end
 
-      if KupacZaglavlje.where(kupac_id: @kupac.ids.first, zaglavlje_id: @zaglavlje_id).empty?
-        KupacZaglavlje.create(kupac_id: @kupac.ids.first, zaglavlje_id: @zaglavlje_id, oznaka_poreznog_broja: @oznaka_poreznog_broja)
+      if KupacZaglavlje.where(kupac_id: @kupac.id, zaglavlje_id: @zaglavlje_id).empty?
+        KupacZaglavlje.create(kupac_id: @kupac.id, zaglavlje_id: @zaglavlje_id, oznaka_poreznog_broja: @oznaka_poreznog_broja)
       end
 
       article.zaglavlje_id = @zaglavlje_id
       article.save!
 
-      KupacRacun.create(kupac_id: @kupac.ids.first, racun_id: article.id)
+      KupacRacun.create(kupac_id: @kupac.id, racun_id: article.id)
     end
 
     return "Ispravno", @zaglavlje_id.to_s
