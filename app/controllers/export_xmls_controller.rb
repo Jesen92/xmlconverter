@@ -228,13 +228,14 @@ class ExportXmlsController < ApplicationController
             }
           end
           }
+          puts "OPZ: #{params[:zaglavlje]["opz_ukupan_iznos_racuna_s_pdv"]}"
           xml.UkupanIznosRacunaObrasca number_to_currency(@ukupan_iznos_racuna_obrasca, unit: "", separator: ".", delimiter: "")
           xml.UkupanIznosPdvObrasca number_to_currency(@ukupan_iznos_pdv_obrasca, unit: "", separator: ".", delimiter: "")
           xml.UkupanIznosRacunaSPdvObrasca number_to_currency(@ukupan_iznos_racuna_s_pdv_obrasca, unit: "", separator: ".", delimiter: "")
           xml.UkupniPlaceniIznosRacunaObrasca number_to_currency(@ukupno_placeni_iznos, unit: "", separator: ".", delimiter: "")
           xml.NeplaceniIznosRacunaObrasca number_to_currency(@ukupno_neplaceni_iznos, unit: "", separator: ".", delimiter: "")
-          xml.OPZUkupanIznosRacunaSPdv !params[:zaglavlje]["opz_ukupan_iznos_racuna_s_pdv"].nil? ? number_to_currency(params[:zaglavlje]["opz_ukupan_iznos_racuna_s_pdv"].gsub(",", "."), unit: "", separator: ".", delimiter: "") : "0.00" #TODO upit u poreznu za što je to pošto nije pojašnjeno u dokumentaciji
-          xml.OPZUkupanIznosPdv !params[:zaglavlje]["opz_ukupan_iznos_pdv"].nil? ? number_to_currency(params[:zaglavlje]["opz_ukupan_iznos_pdv"].gsub(",", "."), unit: "", separator: ".", delimiter: "") : "0.00" #TODO - \\ -
+          xml.OPZUkupanIznosRacunaSPdv params[:zaglavlje]["opz_ukupan_iznos_racuna_s_pdv"] != "" ? number_to_currency(params[:zaglavlje]["opz_ukupan_iznos_racuna_s_pdv"].gsub(",", "."), unit: "", separator: ".", delimiter: "") : "0.00" #TODO upit u poreznu za što je to pošto nije pojašnjeno u dokumentaciji
+          xml.OPZUkupanIznosPdv params[:zaglavlje]["opz_ukupan_iznos_pdv"] != "" ? number_to_currency(params[:zaglavlje]["opz_ukupan_iznos_pdv"].gsub(",", "."), unit: "", separator: ".", delimiter: "") : "0.00" #TODO - \\ -
         }
       }
 

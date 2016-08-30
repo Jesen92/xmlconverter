@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <module type="RUBY_MODULE" version="4">
   <component name="CompassSettings">
-    <option name="compassExecutableFilePath" value="$USER_HOME$/.rbenv/versions/2.2.3/lib/ruby/gems/2.2.0/gems/compass-1.1.0.alpha.3/bin/compass" />
+    <option name="compassExecutableFilePath" value="$USER_HOME$/.rbenv/versions/2.2.3/lib/ruby/gems/2.2.0/gems/compass-1.0.3/bin/compass" />
   </component>
   <component name="FacetManager">
     <facet type="RailsFacetType" name="Ruby on Rails">
