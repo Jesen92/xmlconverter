@@ -3,6 +3,7 @@ class GeneratePdfController < ApplicationController
 
   def show
     @obrazac = Zaglavlje.find(params[:id])
+    @page_break_count = 0
 
     @iznos_racuna = 0.00
     @iznos_pdv = 0.00

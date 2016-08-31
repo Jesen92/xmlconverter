@@ -56,6 +56,11 @@
     text-align: center;
     padding: 7px 7px 7px 7px;
   }
+
+  table, tr, td, th, tbody, thead, tfoot {
+    page-break-inside: avoid !important;
+  }
+
 </style>
 
 <div class="naziv-top">
@@ -138,6 +143,10 @@
       @i = i
       break
     } %>
+    <% if @page_break_count == 10 %>
+        <div class="alwaysbreak"></div>
+        <% @page_break_count = -5 %>
+    <% end %>
     <% puts "Brojac je: "+@i.to_s %>
     <td class="tablica-header"><%= @porezni_broj %></td>
     <td class="tablica-header"><%= kupac.naziv_kupca %></td>
@@ -152,9 +161,14 @@
     <td class="tablica-header-currency"><%= number_to_currency(kupac.racuns.offset(@i).first.placeni_iznos_racuna, unit: "", separator: ",", delimiter: "") %></td><% @placeni_iznos_racuna += kupac.racuns.offset(@i).first.placeni_iznos_racuna %>
     <td class="tablica-header-currency"><%= number_to_currency(ukupan_iznos - kupac.racuns.offset(@i).first.placeni_iznos_racuna, unit: "", separator: ",", delimiter: "") %></td><% @neplaceni_dio_racuna += ukupan_iznos - kupac.racuns.offset(@i).first.placeni_iznos_racuna %>
   </tr>
+      <% @page_break_count += 1 %>
       <% @rb_racuna += 1 %>
     <% kupac.racuns[@i+1..-1].each do |racun| %>
           <% next if racun.zaglavlje_id != @obrazac.id %>
+          <% if @page_break_count == 10 %>
+              <div class="alwaysbreak"></div>
+              <% @page_break_count = -5 %>
+          <% end %>
       <tr>
         <td class="tablica-header"><%= @rb_kupca %></td>
         <td class="tablica-header"></td>
@@ -172,6 +186,7 @@
         <td class="tablica-header-currency"><%= number_to_currency(ukupan_iznos - racun.placeni_iznos_racuna, unit: "", separator: ",", delimiter: "") %></td><% @neplaceni_dio_racuna += ukupan_iznos - racun.placeni_iznos_racuna %>
       </tr>
           <% @rb_racuna += 1 %>
+          <% @page_break_count += 1 %>
     <% end %>
       <% @ukupno_iznos_racuna += @iznos_racuna %>
       <% @ukupno_iznos_pdv += @iznos_pdv %>
