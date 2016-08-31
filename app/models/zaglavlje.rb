@@ -10,6 +10,7 @@ class Zaglavlje < ActiveRecord::Base
   accepts_nested_attributes_for :racuns, reject_if: :all_blank
 
   def self.import_xlsx(file, user_id)
+    @svi_kupci = Kupac.all
     puts "usao je u import_xlsx"
     @zaglavlje_id = 0
 
@@ -39,12 +40,18 @@ class Zaglavlje < ActiveRecord::Base
       article = Kupac.new   #find_by_id(row["id"]) || - ako ce se mijenjati vrijednosti preko excel tablica
       article.attributes = row.to_hash.slice(*row.to_hash.keys)
 
-      next if !self.check_if_duplicates(article)
+      next if !self.check_if_duplicates(@svi_kupci ,article)
 
       article.zaglavlje_id = @zaglavlje_id #postavljanje id-a od kreiranog zaglavlja
 
       article.save!
-      @kupci[article.porezni_broj] = article.id
+      if article.porezni_broj != nil
+        @kupci[article.porezni_broj] = article.id
+      elsif article.pdv_identifikacijski_broj != nil
+        @kupci[article.pdv_identifikacijski_broj] = article.id
+      elsif article.ostali_brojevi != nil
+        @kupci[article.ostali_brojevi] = article.id
+      end
     end
 
     racuni = spreadsheet.sheet(2) #racuni
@@ -57,7 +64,7 @@ class Zaglavlje < ActiveRecord::Base
       article = Racun.new   #find_by_id(row["id"]) || - ako ce se mijenjati vrijednosti preko excel tablica
       article.attributes = row.to_hash.slice(*row.to_hash.keys)
 
-      @kupac = Kupac.where("porezni_broj = ? OR pdv_identifikacijski_broj = ? OR ostali_brojevi = ?",article.porezni_broj_kupca, article.porezni_broj_kupca, article.porezni_broj_kupca)
+      @kupac = Kupac.find_by("porezni_broj = ? OR pdv_identifikacijski_broj = ? OR ostali_brojevi = ?",article.porezni_broj_kupca, article.porezni_broj_kupca, article.porezni_broj_kupca)
 
       if Kupac.find_by(porezni_broj: article.porezni_broj_kupca)
         @kupac = Kupac.find_by(porezni_broj: article.porezni_broj_kupca)
@@ -65,7 +72,7 @@ class Zaglavlje < ActiveRecord::Base
       elsif Kupac.find_by(pdv_identifikacijski_broj: article.porezni_broj_kupca)
         @kupac = Kupac.find_by(pdv_identifikacijski_broj: article.porezni_broj_kupca)
         @oznaka_poreznog_broja = 2
-      elsif Kupac.find_by(osali_brojevi: article.porezni_broj_kupca)
+      elsif Kupac.find_by(ostali_brojevi: article.porezni_broj_kupca)
         @kupac = Kupac.find_by(ostali_brojevi: article.porezni_broj_kupca)
         @oznaka_poreznog_broja = 3
       end
@@ -100,18 +107,19 @@ class Zaglavlje < ActiveRecord::Base
     end
   end
 
-  def self.check_if_duplicates(_kupac)
+  def self.check_if_duplicates(svi_kupci ,_kupac)
 
-    Kupac.all.each do |kupac|
-      if kupac.porezni_broj == _kupac.porezni_broj
+    svi_kupci.each do |kupac|
+      if kupac.porezni_broj != nil && kupac.porezni_broj == _kupac.porezni_broj
         return false
-      elsif !kupac.pdv_identifikacijski_broj.nil? && kupac.pdv_identifikacijski_broj == _kupac.pdv_identifikacijski_broj
+      elsif kupac.pdv_identifikacijski_broj != nil && kupac.pdv_identifikacijski_broj == _kupac.pdv_identifikacijski_broj
         return false
-      elsif !kupac.ostali_brojevi.nil? &&  kupac.ostali_brojevi == kupac.ostali_brojevi
+      elsif kupac.ostali_brojevi != nil &&  kupac.ostali_brojevi == _kupac.ostali_brojevi
         return false
       end
     end
 
+    puts "Zapisujem kupca: "+_kupac.naziv_kupca
     true
   end
 

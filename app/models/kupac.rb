@@ -9,7 +9,7 @@ class Kupac < ActiveRecord::Base
 
   belongs_to :user
 
-  validates :naziv_kupca, :porezni_broj, presence: true
+  validates :naziv_kupca, presence: true
 
   def self.check_duplicate_values
     grouped = all.group_by{|model| [model.porezni_broj] }
