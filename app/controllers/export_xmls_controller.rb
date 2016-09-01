@@ -8,14 +8,11 @@ class ExportXmlsController < ApplicationController
 
   ############################################# importiranje excel tablica
   def import
-    @document = FileUpload.new
+    @document = Document.new
   end
 
   def import_create
-
-    puts "Orginalno ime je: #{params[:file_upload][:document]}"
-
-    message, zaglavlje_id = Zaglavlje.import_xlsx(params[:file_upload][:document], current_user.id)
+    message, zaglavlje_id= Zaglavlje.import_xlsx(params[:document][:file], current_user.id)
 
     if message.include? "Pogreška"
       flash[:alert] = message
@@ -24,12 +21,11 @@ class ExportXmlsController < ApplicationController
       end
       redirect_to(:back)
     else
-      flash[:notice] = "XLSX tablica je uspješno uvezena i obrazac je spremljen!"
+      #flash[:notice] = "XLSX tablica je uspješno uvezena i obrazac je spremljen!"
       redirect_to export_xmls_edit_path(id: zaglavlje_id.to_i)
     end
-
-
   end
+
   #############################################
 
   def index
@@ -403,6 +399,10 @@ class ExportXmlsController < ApplicationController
 
   def kupac_params
     params.require(:zaglavlje).permit(kupacs_attributes: [ racuns_attributes: [:created_at, :updated_at, :iznos_racuna, :iznos_pdv, :placeni_iznos_racuna ,:kupac_id, :broj_izdanog_racuna, :broj_dana_kasnjenja, :datum_izdanog_racuna, :valuta_placanja_racuna]])
+  end
+
+  def document_params
+    params.require(:document).permit(:file)
   end
 
   def error_destroy(id)

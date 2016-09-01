@@ -32,13 +32,17 @@ Rails.application.routes.draw do
 
   get 'export_xmls/import' => "export_xmls#import", :as => 'import'
 
-  get 'export_xmls/import_create' => "export_xmls#import_create", :as => 'import_create'
+  match 'export_xmls/import_create' => "export_xmls#import_create", :as => 'import_create', via: :post
 
   get 'export_xmls/download_pdf' => "export_xmls#download_pdf", :as => 'download_pdf'
 
   get 'export_xmls/download_xlsx' => "export_xmls#download_xlsx", :as => 'download_xlsx'
 
   get 'export_xmls/download_xlsx_primjer' => "export_xmls#download_xlsx_primjer", :as => 'download_xlsx_primjer'
+
+  get 'export_xmls/loading_screen' => "export_xmls#import_kupac" , :as => 'import_kupac'
+
+  get 'export_xmls/loading_screen' => "export_xmls#import_racun" , :as => 'import_racun'
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
@@ -60,10 +64,12 @@ Rails.application.routes.draw do
   resources :export_xmls do
     put :export_myxml, on: :collection
     get :import, on: :collection
-    put :import_create, on: :collection
+    post :import_create, on: :collection
     get :download_pdf, on: :collection
     get :download_xlsx, on: :collection
     get :download_xlsx_primjer, on: :collection
+    put :import_kupac, on: :collection
+    put :import_racun, on: :collection
   end
     resources :kupacs
     resources :generate_pdf

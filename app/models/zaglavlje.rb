@@ -66,15 +66,18 @@ class Zaglavlje < ActiveRecord::Base
 
       @kupac = Kupac.find_by("porezni_broj = ? OR pdv_identifikacijski_broj = ? OR ostali_brojevi = ?",article.porezni_broj_kupca, article.porezni_broj_kupca, article.porezni_broj_kupca)
 
-      if Kupac.find_by(porezni_broj: article.porezni_broj_kupca)
+      if @kupac.porezni_broj == article.porezni_broj_kupca
         @kupac = Kupac.find_by(porezni_broj: article.porezni_broj_kupca)
         @oznaka_poreznog_broja = 1
-      elsif Kupac.find_by(pdv_identifikacijski_broj: article.porezni_broj_kupca)
+        puts "Usao1"
+      elsif @kupac.pdv_identifikacijski_broj == article.porezni_broj_kupca
         @kupac = Kupac.find_by(pdv_identifikacijski_broj: article.porezni_broj_kupca)
         @oznaka_poreznog_broja = 2
-      elsif Kupac.find_by(ostali_brojevi: article.porezni_broj_kupca)
+        puts "Usao2"
+      elsif @kupac.ostali_brojevi == article.porezni_broj_kupca
         @kupac = Kupac.find_by(ostali_brojevi: article.porezni_broj_kupca)
         @oznaka_poreznog_broja = 3
+        puts "Usao3"
       end
 
       if @kupac.nil?

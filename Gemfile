@@ -41,6 +41,8 @@ gem 'bootstrap-chosen-rails'
 gem "compass-rails", github: "Compass/compass-rails", branch: "master"
 gem 'chosen-rails'
 
+gem 'thin'
+
 ########################### za kreiranje iz html-a u pdf
 gem 'wicked_pdf'
 gem 'wkhtmltopdf-binary'
