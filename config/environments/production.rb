@@ -7,7 +7,8 @@ Rails.application.configure do
           :bucket => ENV['BUC'],
           :access_key_id => ENV['AKI'],
           :secret_access_key => ENV['SAK']
-      }
+      },
+      :s3_region => ENV['AWS_REGION']
   }
 
 
