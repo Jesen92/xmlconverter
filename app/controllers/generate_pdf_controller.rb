@@ -1,4 +1,5 @@
 class GeneratePdfController < ApplicationController
+  before_filter :authenticate_user!
   layout "wicked_pdf"
 
   def show

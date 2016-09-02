@@ -1,4 +1,5 @@
 class Zaglavlje < ActiveRecord::Base
+  has_one :import_log
   has_many :kupac_zaglavljes
   has_many :kupacs, :through => :kupac_zaglavljes
 
@@ -8,6 +9,28 @@ class Zaglavlje < ActiveRecord::Base
 
   accepts_nested_attributes_for :kupacs, reject_if: :all_blank
   accepts_nested_attributes_for :racuns, reject_if: :all_blank
+
+  def self.import_job(file, user_id)
+    message, zaglavlje_id = self.import_xlsx(file, user_id)
+
+    if message.include? "Pogreška"
+      flash[:alert] = message
+      if zaglavlje_id != 0
+        error_destroy(zaglavlje_id)
+      end
+      ImportLog.create(user_id: user_id,message: message, seen: 0)
+    else
+      ImportLog.create(user_id: user_id,message: message,zaglavlje_id: zaglavlje_id, seen: 0)
+    end
+  end
+
+  def error_destroy(id)
+    @obrazac = Zaglavlje.find(id)
+    @racuni = Racun.where(zaglavlje_id: id)
+
+    @racuni.destroy_all
+    @obrazac.destroy
+  end
 
   def self.import_xlsx(file, user_id)
     @svi_kupci = Kupac.all
@@ -96,17 +119,17 @@ class Zaglavlje < ActiveRecord::Base
 
     return "Ispravno", @zaglavlje_id.to_s
 
-  #rescue => e
-  #  return "Pogreška u listi '#{@error_log}'\nPogreška se nalazi u redu broj #{@error_red} ili u zaglavlju te liste!\nError message: #{e.message}", @zaglavlje_id
+  rescue => e
+    return "Pogreška u listi '#{@error_log}'\nPogreška se nalazi u redu broj #{@error_red} ili u zaglavlju te liste!\nError message: #{e.message}", @zaglavlje_id
   end
 
   def self.open_spreadsheet(file)
 
-    case File.extname(file.original_filename)
-      when ".csv" then Roo::Csv.new(file.path, nil, :ignore)
-      when ".xls" then Roo::Excel.new(file.path, nil, :ignore)
-      when ".xlsx" then Roo::Excelx.new(file.path)
-      else raise "Unknown file type: #{File.extname(file)}"
+    case File.extname(file.document_file_name)
+      when ".csv" then Roo::Csv.new(file.document.url, nil, :ignore)
+      when ".xls" then Roo::Excel.new(file.document.url, nil, :ignore)
+      when ".xlsx" then Roo::Excelx.new(file.document.url)
+      else raise "Unknown file type: #{File.extname(file.document_file_name)}"
     end
   end
 

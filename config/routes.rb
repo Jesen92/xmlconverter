@@ -44,6 +44,10 @@ Rails.application.routes.draw do
 
   get 'export_xmls/loading_screen' => "export_xmls#import_racun" , :as => 'import_racun'
 
+  get 'exmport_xmls/set_notification_seen' => "export_xmls#set_notification_seen", :as => 'set_notification_seen'
+
+  match "/delayed_job" => DelayedJobWeb, :anchor => false, via: [:get, :post]
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
@@ -70,6 +74,7 @@ Rails.application.routes.draw do
     get :download_xlsx_primjer, on: :collection
     put :import_kupac, on: :collection
     put :import_racun, on: :collection
+    put :set_notification_seen, on: :collection
   end
     resources :kupacs
     resources :generate_pdf

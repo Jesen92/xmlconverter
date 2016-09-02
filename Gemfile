@@ -43,6 +43,16 @@ gem 'chosen-rails'
 
 gem 'thin'
 
+gem 'delayed_job_active_record'
+
+gem "delayed_job_web"
+
+gem "daemons"
+
+############################## za upload file-ova
+gem "paperclip", "~> 5.0.0"
+gem 'aws-sdk', '~> 2.3.0'
+
 ########################### za kreiranje iz html-a u pdf
 gem 'wicked_pdf'
 gem 'wkhtmltopdf-binary'

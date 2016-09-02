@@ -1,19 +1,34 @@
 class ExportXmlsController < ApplicationController
   include ActionView::Helpers::NumberHelper
   before_filter :authenticate_user!
+  before_filter :check_logs
   respond_to :xml
 
   require 'nokogiri'
   require 'open-uri'
 
+  def set_notification_seen
+    ImportLog.find(params[:id]).update(seen: 1)
+
+    redirect_to(:back)
+  end
+
   ############################################# importiranje excel tablica
   def import
-    @document = Document.new
+    @document = Opzstat.new
   end
 
   def import_create
-    message, zaglavlje_id= Zaglavlje.import_xlsx(params[:document][:file], current_user.id)
 
+    @document = Opzstat.new( document_params )
+    @document.save
+
+    puts "URL: "+@document.document.url
+    puts "Path: "+@document.document.path
+
+    Zaglavlje.delay.import_job(@document, current_user.id)
+
+=begin
     if message.include? "Pogreška"
       flash[:alert] = message
       if zaglavlje_id != 0
@@ -24,6 +39,10 @@ class ExportXmlsController < ApplicationController
       #flash[:notice] = "XLSX tablica je uspješno uvezena i obrazac je spremljen!"
       redirect_to export_xmls_edit_path(id: zaglavlje_id.to_i)
     end
+=end
+
+    flash[:notice] = "Podaci se obrađuju! Dobiti će te notifikaciju o statusu izrade obrasca!"
+    redirect_to export_xmls_index_path
   end
 
   #############################################
@@ -402,7 +421,7 @@ class ExportXmlsController < ApplicationController
   end
 
   def document_params
-    params.require(:document).permit(:file)
+    params.require(:opzstat).permit(:document)
   end
 
   def error_destroy(id)

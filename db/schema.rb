@@ -11,7 +11,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160901123502) do
+ActiveRecord::Schema.define(version: 20160902153540) do
+
+  create_table "delayed_jobs", force: :cascade do |t|
+    t.integer  "priority",   limit: 4,     default: 0, null: false
+    t.integer  "attempts",   limit: 4,     default: 0, null: false
+    t.text     "handler",    limit: 65535,             null: false
+    t.text     "last_error", limit: 65535
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by",  limit: 255
+    t.string   "queue",      limit: 255
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority", using: :btree
 
   create_table "documents", force: :cascade do |t|
     t.string   "filename",      limit: 255
@@ -30,6 +46,15 @@ ActiveRecord::Schema.define(version: 20160901123502) do
     t.datetime "updated_at",                        null: false
   end
 
+  create_table "import_logs", force: :cascade do |t|
+    t.string   "message",      limit: 255
+    t.integer  "zaglavlje_id", limit: 4
+    t.integer  "user_id",      limit: 4
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+    t.integer  "seen",         limit: 4
+  end
+
   create_table "kupac_racuns", force: :cascade do |t|
     t.integer  "kupac_id",   limit: 4
     t.integer  "racun_id",   limit: 4
@@ -46,7 +71,6 @@ ActiveRecord::Schema.define(version: 20160901123502) do
   end
 
   create_table "kupacs", force: :cascade do |t|
-    t.integer  "r_b",                       limit: 4
     t.integer  "oznaka_poreznog_broja",     limit: 4
     t.string   "porezni_broj",              limit: 255
     t.string   "naziv_kupca",               limit: 255
@@ -56,6 +80,15 @@ ActiveRecord::Schema.define(version: 20160901123502) do
     t.string   "pdv_identifikacijski_broj", limit: 255
     t.string   "ostali_brojevi",            limit: 255
     t.integer  "user_id",                   limit: 4
+  end
+
+  create_table "opzstats", force: :cascade do |t|
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
+    t.string   "document_file_name",    limit: 255
+    t.string   "document_content_type", limit: 255
+    t.integer  "document_file_size",    limit: 4
+    t.datetime "document_updated_at"
   end
 
   create_table "outputs", force: :cascade do |t|
@@ -69,13 +102,13 @@ ActiveRecord::Schema.define(version: 20160901123502) do
     t.date     "datum_izdanog_racuna"
     t.date     "valuta_placanja_racuna"
     t.integer  "broj_dana_kasnjenja",     limit: 4
-    t.decimal  "iznos_racuna",                        precision: 10
-    t.decimal  "iznos_pdv",                           precision: 10
-    t.decimal  "ukupan_iznos_racuna_pdv",             precision: 10
-    t.decimal  "placeni_iznos_racuna",                precision: 10
-    t.decimal  "neplaceni_dio_racuna",                precision: 10
-    t.datetime "created_at",                                         null: false
-    t.datetime "updated_at",                                         null: false
+    t.decimal  "iznos_racuna",                        precision: 10, scale: 2
+    t.decimal  "iznos_pdv",                           precision: 10, scale: 2
+    t.decimal  "ukupan_iznos_racuna_pdv",             precision: 10, scale: 2
+    t.decimal  "placeni_iznos_racuna",                precision: 10, scale: 2
+    t.decimal  "neplaceni_dio_racuna",                precision: 10, scale: 2
+    t.datetime "created_at",                                                   null: false
+    t.datetime "updated_at",                                                   null: false
     t.integer  "kupac_id",                limit: 4
     t.string   "porezni_broj_kupca",      limit: 255
     t.integer  "zaglavlje_id",            limit: 4
@@ -119,11 +152,11 @@ ActiveRecord::Schema.define(version: 20160901123502) do
     t.string   "sastavio_email",                limit: 255
     t.date     "na_dan"
     t.date     "nisu_naplaceni_do"
-    t.datetime "created_at",                                               null: false
-    t.datetime "updated_at",                                               null: false
+    t.datetime "created_at",                                                         null: false
+    t.datetime "updated_at",                                                         null: false
     t.integer  "oib",                           limit: 8
-    t.decimal  "opz_ukupan_iznos_racuna_s_pdv",             precision: 10
-    t.decimal  "opz_ukupan_iznos_pdv",                      precision: 10
+    t.decimal  "opz_ukupan_iznos_racuna_s_pdv",             precision: 10, scale: 2
+    t.decimal  "opz_ukupan_iznos_pdv",                      precision: 10, scale: 2
     t.integer  "user_id",                       limit: 4
     t.datetime "kreiran_xml"
     t.datetime "poslan_na_poreznu"
