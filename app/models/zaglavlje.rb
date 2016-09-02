@@ -64,17 +64,17 @@ class Zaglavlje < ActiveRecord::Base
       article = Racun.new   #find_by_id(row["id"]) || - ako ce se mijenjati vrijednosti preko excel tablica
       article.attributes = row.to_hash.slice(*row.to_hash.keys)
 
-      @kupac = Kupac.find_by("porezni_broj = ? OR pdv_identifikacijski_broj = ? OR ostali_brojevi = ?",article.porezni_broj_kupca, article.porezni_broj_kupca, article.porezni_broj_kupca)
+      #@kupac = Kupac.find_by("porezni_broj = ? OR pdv_identifikacijski_broj = ? OR ostali_brojevi = ?",article.porezni_broj_kupca, article.porezni_broj_kupca, article.porezni_broj_kupca)
 
-      if @kupac.porezni_broj == article.porezni_broj_kupca
+      if Kupac.find_by(porezni_broj: article.porezni_broj_kupca)
         @kupac = Kupac.find_by(porezni_broj: article.porezni_broj_kupca)
         @oznaka_poreznog_broja = 1
         puts "Usao1"
-      elsif @kupac.pdv_identifikacijski_broj == article.porezni_broj_kupca
+      elsif Kupac.find_by(pdv_identifikacijski_broj: article.porezni_broj_kupca)
         @kupac = Kupac.find_by(pdv_identifikacijski_broj: article.porezni_broj_kupca)
         @oznaka_poreznog_broja = 2
         puts "Usao2"
-      elsif @kupac.ostali_brojevi == article.porezni_broj_kupca
+      elsif Kupac.find_by(ostali_brojevi: article.porezni_broj_kupca)
         @kupac = Kupac.find_by(ostali_brojevi: article.porezni_broj_kupca)
         @oznaka_poreznog_broja = 3
         puts "Usao3"
