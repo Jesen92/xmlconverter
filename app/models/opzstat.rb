@@ -1,4 +1,5 @@
 class Opzstat < ActiveRecord::Base
+  belongs_to :zaglavlje
 
   has_attached_file :document
 

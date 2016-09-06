@@ -44,8 +44,12 @@
     t.created_at.strftime("%d.%m.%Y. %H:%M")
   end
 
-  g.column do |t|
-    link_to("Generiraj Izvješće", generate_pdf_show_path(id: t.id, format: :pdf, :status => 301), :method => :get, :target => "_blank" )
+  g.column attribute: 'document_file_name',:assoc => :opzstat, :filter => false do |t|
+   if t.opzstat.nil?
+     link_to("Generiraj Izvješće", generate_pdf_show_path(id: t.id, format: :pdf, :status => 301), :method => :get, :target => "_blank" )
+   else
+     link_to("Generiraj Izvješće", generate_pdf_show_path(id: t.id, format: :pdf, :status => 301), :method => :get, :target => "_blank" )+" / "+link_to("Preuzmi excel tablicu", t.opzstat.document.url(false))
+   end
   end
 
   g.column do |t|

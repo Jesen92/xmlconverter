@@ -1,5 +1,7 @@
 class Zaglavlje < ActiveRecord::Base
   has_one :import_log
+  has_one :opzstat
+
   has_many :kupac_zaglavljes
   has_many :kupacs, :through => :kupac_zaglavljes
 
@@ -21,6 +23,8 @@ class Zaglavlje < ActiveRecord::Base
       ImportLog.create(user_id: user_id,message: message, seen: 0)
     else
       ImportLog.create(user_id: user_id,message: message,zaglavlje_id: zaglavlje_id, seen: 0)
+      file.zaglavlje_id = zaglavlje_id
+      file.save
     end
   end
 
@@ -33,7 +37,7 @@ class Zaglavlje < ActiveRecord::Base
   end
 
   def self.import_xlsx(file, user_id)
-    @svi_kupci = Kupac.all
+    #@svi_kupci = Kupac.all
     puts "usao je u import_xlsx"
     @zaglavlje_id = 0
 
@@ -63,11 +67,12 @@ class Zaglavlje < ActiveRecord::Base
       article = Kupac.new   #find_by_id(row["id"]) || - ako ce se mijenjati vrijednosti preko excel tablica
       article.attributes = row.to_hash.slice(*row.to_hash.keys)
 
-      next if !self.check_if_duplicates(@svi_kupci ,article)
+      next if self.check_if_duplicates(article)
 
       article.zaglavlje_id = @zaglavlje_id #postavljanje id-a od kreiranog zaglavlja
-
+      article.user_id = user_id
       article.save!
+=begin
       if article.porezni_broj != nil
         @kupci[article.porezni_broj] = article.id
       elsif article.pdv_identifikacijski_broj != nil
@@ -75,6 +80,7 @@ class Zaglavlje < ActiveRecord::Base
       elsif article.ostali_brojevi != nil
         @kupci[article.ostali_brojevi] = article.id
       end
+=end
     end
 
     racuni = spreadsheet.sheet(2) #racuni
@@ -92,15 +98,15 @@ class Zaglavlje < ActiveRecord::Base
       if Kupac.find_by(porezni_broj: article.porezni_broj_kupca)
         @kupac = Kupac.find_by(porezni_broj: article.porezni_broj_kupca)
         @oznaka_poreznog_broja = 1
-        puts "Usao1"
+        #puts "Usao1"
       elsif Kupac.find_by(pdv_identifikacijski_broj: article.porezni_broj_kupca)
         @kupac = Kupac.find_by(pdv_identifikacijski_broj: article.porezni_broj_kupca)
         @oznaka_poreznog_broja = 2
-        puts "Usao2"
+        #puts "Usao2"
       elsif Kupac.find_by(ostali_brojevi: article.porezni_broj_kupca)
         @kupac = Kupac.find_by(ostali_brojevi: article.porezni_broj_kupca)
         @oznaka_poreznog_broja = 3
-        puts "Usao3"
+        #puts "Usao3"
       end
 
       if @kupac.nil?
@@ -124,7 +130,6 @@ class Zaglavlje < ActiveRecord::Base
   end
 
   def self.open_spreadsheet(file)
-
     case File.extname(file.document_file_name)
       when ".csv" then Roo::Csv.new(file.document.url, nil, :ignore)
       when ".xls" then Roo::Excel.new(file.document.url, nil, :ignore)
@@ -133,20 +138,15 @@ class Zaglavlje < ActiveRecord::Base
     end
   end
 
-  def self.check_if_duplicates(svi_kupci ,_kupac)
+  def self.check_if_duplicates(_kupac)
+    @kupac = Kupac.find_by("porezni_broj = ? AND porezni_broj IS NOT NULL OR pdv_identifikacijski_broj = ? AND pdv_identifikacijski_broj IS NOT NULL OR ostali_brojevi = ? AND ostali_brojevi IS NOT NULL",_kupac.porezni_broj, _kupac.pdv_identifikacijski_broj, _kupac.ostali_brojevi)
 
-    svi_kupci.each do |kupac|
-      if kupac.porezni_broj != nil && kupac.porezni_broj == _kupac.porezni_broj
-        return false
-      elsif kupac.pdv_identifikacijski_broj != nil && kupac.pdv_identifikacijski_broj == _kupac.pdv_identifikacijski_broj
-        return false
-      elsif kupac.ostali_brojevi != nil &&  kupac.ostali_brojevi == _kupac.ostali_brojevi
-        return false
-      end
+    if @kupac.nil?
+      puts "Zapisujem kupca: "+_kupac.naziv_kupca
+      return false
+    else
+      return true
     end
-
-    puts "Zapisujem kupca: "+_kupac.naziv_kupca
-    true
   end
 
 
