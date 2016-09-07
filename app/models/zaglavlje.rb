@@ -52,6 +52,21 @@ class Zaglavlje < ActiveRecord::Base
     article = new   #find_by_id(row["id"]) || - ako ce se mijenjati vrijednosti preko excel tablica
     article.attributes = row.to_hash.slice(*row.to_hash.keys)
     article.user_id = user_id
+
+    if article.na_dan == Date.new(Date.today.year-1,12,31)
+      article.nisu_naplaceni_do = Date.new(Date.today.year,1,31)
+    elsif article.na_dan == Date.new(Date.today.year,3,31)
+      article.nisu_naplaceni_do = Date.new(Date.today.year,4,30)
+    elsif article.na_dan == Date.new(Date.today.year,6,30)
+      article.nisu_naplaceni_do = Date.new(Date.today.year,7,31)
+    elsif article.na_dan == Date.new(Date.today.year,9,30)
+      article.nisu_naplaceni_do = Date.new(Date.today.year,10,31)
+    elsif article.na_dan == Date.new(Date.today.year,12,31)
+      article.nisu_naplaceni_do = Date.new(Date.today.year,1,31)
+    else
+      return "Pogreška! U listi 'zaglavlje' stupac 'na_dan' nije ispravan!"
+    end
+
     article.save!
     @zaglavlje_id = article.id
     @kupci = {}

@@ -16,6 +16,9 @@ module Untitled1
   class Application < Rails::Application
 
     config.active_job.queue_adapter = :delayed_job
+
+    config.i18n.enforce_available_locales = true
+    config.i18n.default_locale = :hr
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.

@@ -30,7 +30,7 @@ class ExportXmlsController < ApplicationController
 
     Zaglavlje.delay.import_job(@document, current_user.id)
 
-    flash[:notice] = "Podaci se obrađuju! Dobiti će te notifikaciju o statusu izrade obrasca!"
+    flash[:notice] = "Podaci se obrađuju! Dobiti ćete notifikaciju o statusu izrade obrasca!"
     redirect_to export_xmls_index_path
   end
 
@@ -63,6 +63,11 @@ class ExportXmlsController < ApplicationController
   def update
 
     @params = params[:zaglavlje]
+
+    if params[:zaglavlje][:kupacs_attributes].nil?
+      flash[:alert] = "Kod kreiranja obrasca mora postojati barem jedan kupac sa barem jednim računom!"
+      return redirect_to(:back)
+    end
     @kupac = params[:zaglavlje][:kupacs_attributes].values
 
     if params[:subaction] == "Brisanje"
@@ -135,7 +140,7 @@ class ExportXmlsController < ApplicationController
     #  number_to_currency(1234567890.50, unit: "R$", separator: ",", delimiter: "")
     # => R$1234567890,50
 
-      builder, is_created = CreateOpzStat1Xml.new(@zaglavlje, current_user).create_opz_stat1_xml
+      builder, is_created = CreateOpzStat1Xml.new(@zaglavlje, current_user).delay.create_opz_stat1_xml
 
       if is_created
         export_myxml(builder)
@@ -164,58 +169,17 @@ class ExportXmlsController < ApplicationController
       end
 
     else
-
-        @obrazac = Zaglavlje.new(project_params)
-        @obrazac.user_id = current_user.id
-        @obrazac.save
-
-        @obrazac.racuns.each do |racun|
-          _racun = Racun.find(racun.id)
-          _racun.zaglavlje_id = @obrazac.id
-          _racun.save
-        end
-
-        params[:zaglavlje][:kupacs_attributes].values.each do |kupac|
-
-          next if kupac["_destroy"] == "1"
-
-          @kupac_zaglavlje = KupacZaglavlje.new()
-
-
-          puts "Id od kupca je "+kupac[:id]
-
-          @kupac_zaglavlje.kupac_id = kupac[:id]
-          @kupac_zaglavlje.zaglavlje_id = @obrazac.id
-          @kupac_zaglavlje.oznaka_poreznog_broja = kupac[:oznaka_poreznog_broja]
-          @kupac_zaglavlje.save
-
-          kupac[:racuns_attributes].values.each do |racun|
-            next if racun["_destroy"] == "1"
-            next if racun[:broj_izdanog_racuna] == nil
-
-            @kupac_racun = KupacRacun.new()
-
-            @racun = Racun.new(racun.except(:id,:_destroy))
-            @racun.zaglavlje_id = @obrazac.id
-
-            @racun.save
-
-            @kupac_racun.racun_id = @racun.id
-            @kupac_racun.kupac_id = kupac[:id]
-            @kupac_racun.save
-          end
-        end
-
-        #TODO izraditi posebnu formu za unos kupaca i izrada nove tablice "Zaglavljes_kupacs" radi optimizaranja baze
-        #Kupac.check_duplicate_values() - problem kod postavljanja id-a od racuna i problem jer sadrzi id od zaglavlja
-
-        flash[:notice] = "Obrazac je snimljen!"
-
-      redirect_to export_xmls_edit_path(id: @obrazac.id)
+      CreateOpzStat1.new(params, current_user.id).create_opz_stat1
     end
 
+    #Kupac.check_duplicate_values() - problem kod postavljanja id-a od racuna i problem jer sadrzi id od zaglavlja
 
+    flash[:notice] = "Podaci se obrađuju! Dobiti ćete notifikaciju o statusu izrade obrasca!"
+
+    redirect_to export_xmls_index_path
   end
+
+
 
   def destroy
     @obrazac = Zaglavlje.find(params[:id])
