@@ -7,8 +7,6 @@ class ExportXmlsController < ApplicationController
   require 'nokogiri'
   require 'open-uri'
 
-  #TODO postavi da se excel download-a sa Amazon S3
-
   def set_notification_seen
     ImportLog.find(params[:id]).update(seen: 1)
 
