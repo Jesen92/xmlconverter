@@ -1,0 +1,47 @@
+<%= grid(@kupacs_grid, show_filters: :always) do |g|
+
+  g.column name: 'Id', attribute: 'id', filter: false do |t|
+    t.id
+  end
+
+  g.column name: 'Naziv', attribute: 'naziv_kupca' do |t|
+    t.naziv_kupca
+  end
+
+  g.column name: 'OIB', attribute: 'porezni_broj' do |t|
+    t.porezni_broj
+  end
+
+  g.column name: 'PDV identifikacijski broj', attribute: 'pdv_identifikacijski_broj' do |t|
+    t.pdv_identifikacijski_broj
+  end
+
+  g.column name: 'Ostali brojevi', attribute: 'ostali_brojevi' do |t|
+    t.ostali_brojevi
+  end
+
+  g.column name: 'Kreirano', attribute: 'created_at', :filter => :jquery_datepicker do |t|
+    t.created_at.strftime("%d.%m.%Y. %H:%M")
+  end
+
+  g.column name: 'Izmijenjeno', attribute: 'updated_at', :filter => :jquery_datepicker do |t|
+    t.updated_at.strftime("%d.%m.%Y. %H:%M")
+  end
+
+  g.column name: 'Zadnje izmijenio', attribute: 'name', :assoc => :user, :filter => false do |t|
+    if t.user != nil
+      t.user.name+" "+t.user.surname
+    else
+      "Korisnik ne postoji"
+    end
+  end
+
+  g.column do |t|
+    link_to("Pregled", kupacs_show_path(id: t.id))
+  end
+
+  g.column do |t|
+    link_to("Uredi", kupacs_edit_path(id: t.id), :method => :get)+" / "+link_to('Izbriši', kupac_path(t.id), method: :delete, data: { confirm: 'Jeste li sigurni?' })
+  end
+
+end -%>

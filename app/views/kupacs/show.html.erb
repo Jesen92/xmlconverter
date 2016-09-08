@@ -1,0 +1,10 @@
+<%= link_to "Pregled svih kupaca", kupacs_index_path, class: "btn btn-primary" %>
+<%= link_to "Pregled svih OPZ-STAT-1 obrazaca", export_xmls_index_path, class: "btn btn-primary " %>
+
+<%= link_to "Sign out", destroy_user_session_path, class: "btn btn-danger pull-right ",  :method => :delete %>
+
+<div class="page-header head-page">
+  <h1><%= @kupac.naziv_kupca %> računi</h1>
+</div>
+
+<%= render partial: 'kupacs/racuns_grid' %>

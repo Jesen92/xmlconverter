@@ -36,6 +36,30 @@ gem 'dotenv-rails'
 
 gem 'gon'
 
+gem 'bootstrap-chosen-rails'
+
+gem "compass-rails", github: "Compass/compass-rails", branch: "master"
+gem 'chosen-rails'
+
+gem 'thin'
+
+gem 'delayed_job_active_record'
+
+gem "delayed_job_web"
+
+gem "daemons"
+
+gem 'exception_notification', '~> 4.2', '>= 4.2.1'
+
+############################## za upload file-ova
+gem "paperclip", "~> 5.0.0"
+gem 'aws-sdk', '~> 2.3.0'
+
+########################### za kreiranje iz html-a u pdf
+gem 'wicked_pdf'
+gem 'wkhtmltopdf-binary'
+###########################
+
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks

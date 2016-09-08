@@ -3,27 +3,33 @@
 
 <div class="page-header head-page">
   <% if !f.object.naziv_kupca? %>
-    <a data-toggle="collapse" href="#collapse123" aria-expanded="true" aria-controls="collapseExample" id="collapse111" ><h3>Kupac</h3></a><small>Kliknite na naziv kupca za proširenje i suženje forme</small>
+    <a data-toggle="collapse" href="#collapse123" aria-expanded="false" aria-controls="collapseExample" id="collapse111" ><h3>Kupac</h3></a><small>Kliknite na naziv kupca za proširenje i suženje forme</small>
   <% else %>
     <a data-toggle="collapse" href="#kupac<%=f.object.id%>" aria-expanded="false" aria-controls="collapseExample" id="kupacToggle<%=f.object.id%>" ><h3><%= f.object.naziv_kupca %></h3></a><small>Kliknite na naziv kupca za proširenje i suženje forme</small>
   <% end %>
 </div>
   <div class="label" id="collapse222" style="color: darkgrey; font-style: italic;"></div>
-  <div class="panel-collapse collapse in" id="<%= f.object.id? ? "kupac"+f.object.id.to_s : "collapse123" %>">
+  <div class="panel-collapse collapse" id="<%= f.object.id? ? "kupac"+f.object.id.to_s : "collapse123" %>">
 <div class="container">
-  <%= f.input :naziv_kupca %>
+  <!--
+  <%= f.input :naziv_kupca , required: true%>
   <div class="row">
     <div class="col-md-6 input_pad">
-    <% if f.object.oznaka_poreznog_broja? %>
-      <%= f.input :oznaka_poreznog_broja ,collection: ([["OIB kupca", 1], ["PDV identifikacijski broj", 2], ["Ostali porezni brojevi", 3]]),
-                selected: f.object.oznaka_poreznog_broja %>
+
+    </div>
+    <div class="col-md-6 input_pad"><%= f.input :porezni_broj %></div>
+  </div> -->
+    <%= f.label "Kupac" %>
+    <%= f.input :id, label: false,:as => :select, :collection => Kupac.all.map {|kupac| [kupac.naziv_kupca, kupac.id]}, input_html: {class:"chosen-select", style: "width: 100% !important;" }, required: true%>
+
+    <% if @zaglavlje != nil && KupacZaglavlje.find_by(kupac_id: f.object.id, zaglavlje_id: @zaglavlje.id) != nil %>
+        <%= f.input :oznaka_poreznog_broja ,collection: ([["OIB kupca", 1], ["PDV identifikacijski broj", 2], ["Ostali porezni brojevi", 3]]),
+                    selected: KupacZaglavlje.find_by(kupac_id: f.object.id, zaglavlje_id: @zaglavlje.id).oznaka_poreznog_broja %>
     <% else %>
         <%= f.input :oznaka_poreznog_broja ,collection: ([["OIB kupca", 1], ["PDV identifikacijski broj", 2], ["Ostali porezni brojevi", 3]]),
                     selected: 1 %>
     <% end %>
-    </div>
-    <div class="col-md-6 input_pad"><%= f.input :porezni_broj %></div>
-  </div>
+
     <div id="racuns" style="margin-top: 20px">
       <%= f.simple_fields_for :racuns, html: {multipart: true} do |racun| %>
           <%= render 'racun_fields', :f => racun  %>

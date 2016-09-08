@@ -1,3 +1,4 @@
+<% if f.object.zaglavlje_id == @zaglavlje.id || f.object.zaglavlje_id == nil %>
 <div class="nested-fields"%>
   <div class="well" style="background-color: white">
     <div class="page-header head-page">
@@ -9,17 +10,17 @@
     </div>
     <div class="label" id="collapse555" style="color: darkgrey; font-style: italic;"></div>
     <div class="panel-collapse collapse in" id="<%= f.object.id? ? "racun"+f.object.id.to_s : "collapse115" %>">
-    <%= f.input :broj_izdanog_racuna, label: "Broj izdanog računa" %>
+    <%= f.input :broj_izdanog_racuna, label: "Broj izdanog računa" , required: true%>
     <!-- <%= f.input :broj_dana_kasnjenja %> -->
 
   <div class="row">
-    <div class="col-md-4 input_pad"><%= f.input :iznos_racuna, :input_html => {value: number_with_precision(f.object.iznos_racuna, precision: 2) }, label: "Iznos računa" %></div>
-    <div class="col-md-4 input_pad"><%= f.input :iznos_pdv, :input_html => {value: number_with_precision(f.object.iznos_pdv, precision: 2) } , label: "Iznos pdv"%></div>
-    <div class="col-md-4 input_pad"><%= f.input :placeni_iznos_racuna, :input_html => {value: number_with_precision(f.object.placeni_iznos_racuna, precision: 2) }, label: "Plaćeni iznos računa" %></div>
+    <div class="col-md-4 input_pad"><%= f.input :iznos_racuna, :input_html => {value: number_with_precision(f.object.iznos_racuna, precision: 2) }, label: "Iznos računa", required: true %></div>
+    <div class="col-md-4 input_pad"><%= f.input :iznos_pdv, :input_html => {value: number_with_precision(f.object.iznos_pdv, precision: 2) } , label: "Iznos pdv" , required: true%></div>
+    <div class="col-md-4 input_pad"><%= f.input :placeni_iznos_racuna, :input_html => {value: number_with_precision(f.object.placeni_iznos_racuna, precision: 2) }, label: "Plaćeni iznos računa" , required: true%></div>
   </div>
     <div class="row">
-      <div class="col-md-4"><%= f.input :datum_izdanog_racuna, label: "Datum izdanog računa" %></div>
-      <div class="col-md-4"><%= f.input :valuta_placanja_racuna, label: "Valuta plaćanja računa" %></div>
+      <div class="col-md-4"><%= f.input :datum_izdanog_racuna, label: "Datum izdanog računa"  , required: true%></div>
+      <div class="col-md-4"><%= f.input :valuta_placanja_racuna, label: "Valuta plaćanja računa" , required: true%></div>
     </div>
     <p></p>
 
@@ -28,7 +29,7 @@
   </div>
 </div>
 </div>
-
+<% end %>
 <script>
   var element_id = document.getElementById("collapse115");
   var element_href = document.getElementById("collapse155");

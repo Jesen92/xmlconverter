@@ -18,7 +18,7 @@
   <% end %>
 </div>
 
-<%= simple_form_for @document, url: import_create_path, method: :put,html: {class: 'form-horizontal', multipart: true} do |form| %>
+<%= simple_form_for @document, url: import_create_path, method: :post,html: {class: 'form-horizontal', multipart: true} do |form| %>
     <%= form.input :document, as: :file %>
 
     <%= form.submit "Uvezi", class:"btn btn-success" %> <%= link_to "Prekid unosa", export_xmls_index_path, class: "btn btn-warning pull-right", data: { confirm: 'Jeste li sigurni da želite prekid unosa?' } %>

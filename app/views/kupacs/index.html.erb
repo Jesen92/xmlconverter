@@ -1,0 +1,22 @@
+
+<div class="btn-group" >
+  <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Novi obrazac <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu">
+    <li><%= link_to "OPZ-STAT-1 obrazac", export_xmls_new_path%></li>
+    <li><%= link_to "Uvezi XLSX tablicu", import_path%></li>
+  </ul>
+</div>
+<%= link_to "Novi kupac", kupacs_new_path, class: "btn btn-success" %>
+<%= link_to "Pregled svih OPZ-STAT-1 obrazaca", export_xmls_index_path, class: "btn btn-primary " %>
+
+<%= link_to "Odjavi se", destroy_user_session_path, class: "btn btn-danger pull-right ",  :method => :delete %>
+
+
+<div class="page-header head-page">
+  <h1>Kupci</h1>
+</div>
+
+<%= render partial: 'kupacs/kupacs_grid' %>
+

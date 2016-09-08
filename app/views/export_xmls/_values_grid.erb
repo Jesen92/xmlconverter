@@ -44,14 +44,20 @@
     t.created_at.strftime("%d.%m.%Y. %H:%M")
   end
 
-  g.column do |t|
-    if t.user_id == current_user.id || !t.zakljucano_uredivanje? || current_user.role == "Admin"
-      link_to("Uredi", export_xmls_edit_path(id: t.id), :method => :get)
-    end
+  g.column attribute: 'document_file_name',:assoc => :opzstat, :filter => false do |t|
+   if t.opzstat.nil?
+     link_to("Generiraj Izvješće", generate_pdf_show_path(id: t.id, format: :pdf, :status => 301), :method => :get, :target => "_blank" )
+   else
+     link_to("Generiraj Izvješće", generate_pdf_show_path(id: t.id, format: :pdf, :status => 301), :method => :get, :target => "_blank" )+" / "+link_to("Preuzmi excel tablicu", t.opzstat.document.url(false))
+   end
   end
 
   g.column do |t|
-    if t.user_id == current_user.id || !t.zakljucano_brisanje? || current_user.role == "Admin"
+    if t.user_id == current_user.id || !t.zakljucano_uredivanje? || !t.zakljucano_brisanje? || current_user.role == "Admin"
+      link_to('Uredi', export_xmls_edit_path(id: t.id), :method => :get)+" / "+link_to('Izbriši', export_xml_path(t.id), method: :delete, data: { confirm: 'Jeste li sigurni?' })
+    elsif t.user_id == current_user.id || !t.zakljucano_uredivanje? || current_user.role == "Admin"
+      link_to('Uredi', export_xmls_edit_path(id: t.id), :method => :get)
+    elsif t.user_id == current_user.id || !t.zakljucano_brisanje? || current_user.role == "Admin"
       link_to('Izbriši', export_xml_path(t.id), method: :delete, data: { confirm: 'Jeste li sigurni?' })
     end
   end

@@ -14,3 +14,4 @@ Rails.application.config.assets.precompile += %w( login.css )
 Rails.application.config.assets.precompile += %w( OPZ-STAT-1.pdf )
 Rails.application.config.assets.precompile += %w( Sablona_za_nenaplacena_potrazivanja.xlsx )
 Rails.application.config.assets.precompile += %w( Sablona_za_nenaplacena_potrazivanja_primjer-1.xlsx )
+Rails.application.config.assets.precompile += ['blueprint/screen.css', 'pdf.css', 'jquery.ui.datepicker.js', 'pdf.js']

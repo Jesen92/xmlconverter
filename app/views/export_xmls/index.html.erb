@@ -1,4 +1,17 @@
-
+<% if !@import_logs.empty? %>
+    <% @import_logs.each do |log| %>
+        <% if log.message.include? "Pogreška" %>
+            <div class="alert alert-danger" role="alert">
+              <%= simple_format(log.message+"\n"+link_to("Ukloni notifikaciju", set_notification_seen_path(id: log.id))) %>
+              <% log.update(seen: true) %>
+            </div>
+        <% else %>
+            <div class="alert alert-success" role="alert">
+              <%= simple_format("Obrazac je upješno izrađen iz uvezene excel datoteke!\n"+link_to('Pogledaj Uneseni Obrazac', export_xmls_edit_path(id: log.zaglavlje_id), :method => :get)+" / "+link_to("Ukloni notifikaciju", set_notification_seen_path(id: log.id))) %>
+            </div>
+        <% end %>
+    <% end %>
+<% end %>
 <div class="btn-group" >
   <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
     Novi obrazac <span class="caret"></span>
@@ -9,10 +22,20 @@
   </ul>
 </div>
 
-<%= link_to "Sign out", destroy_user_session_path, class: "btn btn-danger pull-right",  :method => :delete %>
+<div class="btn-group" >
+  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Kupci <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu">
+    <li><%= link_to "Pregled svih kupaca", kupacs_index_path %></li>
+    <li><%= link_to "Novi kupac", kupacs_new_path %></li>
+  </ul>
+</div>
+
+<%= link_to "Odjavi se", destroy_user_session_path, class: "btn btn-danger pull-right",  :method => :delete %>
 
   <div class="page-header head-page">
-    <h1>Obrasci</h1>
+    <h1>OPZ-STAT-1 obrasci</h1>
   </div>
 
 
