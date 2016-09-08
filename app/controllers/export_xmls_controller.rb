@@ -35,7 +35,7 @@ class ExportXmlsController < ApplicationController
   #############################################
 
   def index
-    @values_grid = initialize_grid(Zaglavlje.all, include: [ :kupacs, :user, :opzstat ], order: 'zaglavljes.created_at', order_direction: 'desc')
+    @values_grid = initialize_grid(Zaglavlje.where(created: true), include: [ :kupacs, :user, :opzstat ], order: 'zaglavljes.created_at', order_direction: 'desc', per_page: 5)
   end
 
   def show

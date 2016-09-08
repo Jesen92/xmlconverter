@@ -9,6 +9,13 @@ class CreateOpzStat1
     @obrazac = Zaglavlje.new(@params.require(:zaglavlje).permit( :opz_ukupan_iznos_pdv, :opz_ukupan_iznos_racuna_s_pdv, :created_at, :updated_at,:oib, :naziv, :mjesto, :ulica, :broj, :email, :sastavio_ime, :sastavio_prezime, :sastavio_email, :sastavio_tel, :sastavio_fax ,:description, :datum_od, :datum_do, :na_dan, :nisu_naplaceni_do))
     @obrazac.user_id = @user_id
 
+    message, @obrazac.nisu_naplaceni_do, @obrazac.datum_od, @obrazac.datum_do = set_attributes_with_na_dan(@obrazac)
+
+    if message.include? "Pogreška"
+      raise "Neispravno ispunjeno polje 'Na dan'"
+    end
+
+=begin
     if @obrazac.na_dan == Date.new(Date.today.year-1,12,31)
       @obrazac.nisu_naplaceni_do = Date.new(Date.today.year,1,31)
       @obrazac.datum_od = Date.new(Date.today.year-1, 10, 1)
@@ -30,6 +37,7 @@ class CreateOpzStat1
       @obrazac.datum_od = Date.new(Date.today.year, 10, 1)
       @obrazac.datum_do = @obrazac.na_dan
     end
+=end
 
     @obrazac.save
 
@@ -73,10 +81,40 @@ class CreateOpzStat1
 
     end
     ImportLog.create(message: "Ispravno", zaglavlje_id: @obrazac.id, user_id: @user_id, seen: 0)
+    @obrazac.created = true
+    @obrazac.save
 
   rescue => e
     ImportLog.create(message: "Pogreška kod kreiranja obrasca!\nPoruka pogreška: #{e.message}",user_id: @user_id, seen: 0)
     destroy(@obrazac.id)
+  end
+
+  def set_attributes_with_na_dan(article)
+    if article.na_dan == Date.new(Date.today.year-1,12,31)
+      article.nisu_naplaceni_do = Date.new(Date.today.year,1,31)
+      article.datum_od = Date.new(Date.today.year-1, 10, 1)
+      article.datum_do = article.na_dan
+    elsif article.na_dan == Date.new(Date.today.year,3,31)
+      article.nisu_naplaceni_do = Date.new(Date.today.year,4,30)
+      article.datum_od = Date.new(Date.today.year, 1, 1)
+      article.datum_do = article.na_dan
+    elsif article.na_dan == Date.new(Date.today.year,6,30)
+      article.nisu_naplaceni_do = Date.new(Date.today.year,7,31)
+      article.datum_od = Date.new(Date.today.year, 4, 1)
+      article.datum_do = article.na_dan
+    elsif article.na_dan == Date.new(Date.today.year,9,30)
+      article.nisu_naplaceni_do = Date.new(Date.today.year,10,31)
+      article.datum_od = Date.new(Date.today.year, 7, 1)
+      article.datum_do = article.na_dan
+    elsif article.na_dan == Date.new(Date.today.year,12,31)
+      article.nisu_naplaceni_do = Date.new(Date.today.year,1,31)
+      article.datum_od = Date.new(Date.today.year, 10, 1)
+      article.datum_do = article.na_dan
+    else
+      return "Pogreška! U listi 'zaglavlje' stupac 'na_dan' nije ispravan!", nil, nil, nil
+    end
+
+    return "Ispravno", article.nisu_naplaceni_do, article.datum_od, article.datum_do
   end
 
   def project_params(params)

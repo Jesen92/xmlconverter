@@ -16,19 +16,21 @@ class Zaglavlje < ActiveRecord::Base
     message, zaglavlje_id = self.import_xlsx(file, user_id)
 
     if message.include? "Pogreška"
-      flash[:alert] = message
+      #flash[:alert] = message
       if zaglavlje_id != 0
-        error_destroy(zaglavlje_id)
+        self.error_destroy(zaglavlje_id)
       end
+      puts "Usao u message: "+message
       ImportLog.create(user_id: user_id,message: message, seen: 0)
     else
       ImportLog.create(user_id: user_id,message: message,zaglavlje_id: zaglavlje_id, seen: 0)
+      Zaglavlje.find(zaglavlje_id).update(created: true)
       file.zaglavlje_id = zaglavlje_id
       file.save
     end
   end
 
-  def error_destroy(id)
+  def self.error_destroy(id)
     @obrazac = Zaglavlje.find(id)
     @racuni = Racun.where(zaglavlje_id: id)
 
@@ -53,6 +55,14 @@ class Zaglavlje < ActiveRecord::Base
     article.attributes = row.to_hash.slice(*row.to_hash.keys)
     article.user_id = user_id
 
+    message, article.nisu_naplaceni_do, article.datum_od, article.datum_do = self.set_attributes_with_na_dan(article)
+
+    if message.include? "Pogreška"
+      puts message
+      return message, 0
+    end
+
+=begin
     if article.na_dan == Date.new(Date.today.year-1,12,31)
       article.nisu_naplaceni_do = Date.new(Date.today.year,1,31)
       article.datum_od = Date.new(Date.today.year-1, 10, 1)
@@ -76,6 +86,7 @@ class Zaglavlje < ActiveRecord::Base
     else
       return "Pogreška! U listi 'zaglavlje' stupac 'na_dan' nije ispravan!"
     end
+=end
 
     article.save!
     @zaglavlje_id = article.id
@@ -174,5 +185,32 @@ class Zaglavlje < ActiveRecord::Base
     end
   end
 
+  def self.set_attributes_with_na_dan(article)
+    if article.na_dan == Date.new(Date.today.year-1,12,31)
+      article.nisu_naplaceni_do = Date.new(Date.today.year,1,31)
+      article.datum_od = Date.new(Date.today.year-1, 10, 1)
+      article.datum_do = article.na_dan
+    elsif article.na_dan == Date.new(Date.today.year,3,31)
+      article.nisu_naplaceni_do = Date.new(Date.today.year,4,30)
+      article.datum_od = Date.new(Date.today.year, 1, 1)
+      article.datum_do = article.na_dan
+    elsif article.na_dan == Date.new(Date.today.year,6,30)
+      article.nisu_naplaceni_do = Date.new(Date.today.year,7,31)
+      article.datum_od = Date.new(Date.today.year, 4, 1)
+      article.datum_do = article.na_dan
+    elsif article.na_dan == Date.new(Date.today.year,9,30)
+      article.nisu_naplaceni_do = Date.new(Date.today.year,10,31)
+      article.datum_od = Date.new(Date.today.year, 7, 1)
+      article.datum_do = article.na_dan
+    elsif article.na_dan == Date.new(Date.today.year,12,31)
+      article.nisu_naplaceni_do = Date.new(Date.today.year,1,31)
+      article.datum_od = Date.new(Date.today.year, 10, 1)
+      article.datum_do = article.na_dan
+    else
+      return "Pogreška! U listi 'zaglavlje' stupac 'na_dan' nije ispravan!", nil, nil, nil
+    end
+
+    return "Ispravno", article.nisu_naplaceni_do, article.datum_od, article.datum_do
+  end
 
 end

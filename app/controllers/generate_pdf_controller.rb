@@ -25,7 +25,9 @@ class GeneratePdfController < ApplicationController
         format.html
         format.pdf do
           render pdf: "OPZ-STAT-1 Izvješće "+@obrazac.created_at.strftime("%d.%m.%Y") , :template => 'generate_pdf/show.html.erb',  # Excluding ".pdf" extension.
-                 orientation: 'Landscape'
+                 orientation: 'Landscape',
+                 header: { right: '[page] of [topage]' },
+                 title: "OPZ-STAT-1 Izvješće "+@obrazac.created_at.strftime("%d.%m.%Y")
         end
     end
 
