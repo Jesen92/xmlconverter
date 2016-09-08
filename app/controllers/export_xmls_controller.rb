@@ -177,8 +177,6 @@ class ExportXmlsController < ApplicationController
     redirect_to export_xmls_index_path
   end
 
-
-
   def destroy
     @obrazac = Zaglavlje.find(params[:id])
 
