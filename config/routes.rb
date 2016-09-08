@@ -46,7 +46,6 @@ Rails.application.routes.draw do
 
   get 'exmport_xmls/set_notification_seen' => "export_xmls#set_notification_seen", :as => 'set_notification_seen'
 
-  match "/delayed_job" => DelayedJobWeb, :anchor => false, via: [:get, :post]
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
@@ -60,6 +59,7 @@ Rails.application.routes.draw do
     get "login", to: "devise/sessions#new"
     authenticated :user do
       root :to => 'export_xmls#index', as: :authenticated_root
+      match "/delayed_job" => DelayedJobWeb, :anchor => false, via: [:get, :post]
     end
     unauthenticated :user do
       root :to => 'users/sessions#new', as: :unauthenticated_root

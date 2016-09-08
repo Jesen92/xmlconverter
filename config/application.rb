@@ -15,6 +15,10 @@ Bundler.require(*Rails.groups)
 module Untitled1
   class Application < Rails::Application
 
+    config.exception_handler = {
+        dev: true # -> Runs in development mode WITHOUT changing the app environment files
+    }
+
     config.active_job.queue_adapter = :delayed_job
 
     config.i18n.enforce_available_locales = true
