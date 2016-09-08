@@ -55,14 +55,24 @@ class Zaglavlje < ActiveRecord::Base
 
     if article.na_dan == Date.new(Date.today.year-1,12,31)
       article.nisu_naplaceni_do = Date.new(Date.today.year,1,31)
+      article.datum_od = Date.new(Date.today.year-1, 10, 1)
+      article.datum_do = article.na_dan
     elsif article.na_dan == Date.new(Date.today.year,3,31)
       article.nisu_naplaceni_do = Date.new(Date.today.year,4,30)
+      article.datum_od = Date.new(Date.today.year, 1, 1)
+      article.datum_do = article.na_dan
     elsif article.na_dan == Date.new(Date.today.year,6,30)
       article.nisu_naplaceni_do = Date.new(Date.today.year,7,31)
+      article.datum_od = Date.new(Date.today.year, 4, 1)
+      article.datum_do = article.na_dan
     elsif article.na_dan == Date.new(Date.today.year,9,30)
       article.nisu_naplaceni_do = Date.new(Date.today.year,10,31)
+      article.datum_od = Date.new(Date.today.year, 7, 1)
+      article.datum_do = article.na_dan
     elsif article.na_dan == Date.new(Date.today.year,12,31)
       article.nisu_naplaceni_do = Date.new(Date.today.year,1,31)
+      article.datum_od = Date.new(Date.today.year, 10, 1)
+      article.datum_do = article.na_dan
     else
       return "Pogreška! U listi 'zaglavlje' stupac 'na_dan' nije ispravan!"
     end

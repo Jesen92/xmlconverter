@@ -11,14 +11,24 @@ class CreateOpzStat1
 
     if @obrazac.na_dan == Date.new(Date.today.year-1,12,31)
       @obrazac.nisu_naplaceni_do = Date.new(Date.today.year,1,31)
+      @obrazac.datum_od = Date.new(Date.today.year-1, 10, 1)
+      @obrazac.datum_do = @obrazac.na_dan
     elsif @obrazac.na_dan == Date.new(Date.today.year,3,31)
       @obrazac.nisu_naplaceni_do = Date.new(Date.today.year,4,30)
+      @obrazac.datum_od = Date.new(Date.today.year, 1, 1)
+      @obrazac.datum_do = @obrazac.na_dan
     elsif @obrazac.na_dan == Date.new(Date.today.year,6,30)
       @obrazac.nisu_naplaceni_do = Date.new(Date.today.year,7,31)
+      @obrazac.datum_od = Date.new(Date.today.year, 4, 1)
+      @obrazac.datum_do = @obrazac.na_dan
     elsif @obrazac.na_dan == Date.new(Date.today.year,9,30)
       @obrazac.nisu_naplaceni_do = Date.new(Date.today.year,10,31)
+      @obrazac.datum_od = Date.new(Date.today.year, 7, 1)
+      @obrazac.datum_do = @obrazac.na_dan
     elsif @obrazac.na_dan == Date.new(Date.today.year,12,31)
       @obrazac.nisu_naplaceni_do = Date.new(Date.today.year,1,31)
+      @obrazac.datum_od = Date.new(Date.today.year, 10, 1)
+      @obrazac.datum_do = @obrazac.na_dan
     end
 
     @obrazac.save
