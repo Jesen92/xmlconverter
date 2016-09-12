@@ -32,7 +32,7 @@
   </ul>
 </div>
 
-<%= link_to "Odjavi se", destroy_user_session_path, class: "btn btn-danger pull-right",  :method => :delete %>
+<%= link_to "Odjavi se", destroy_user_session_path, class: "btn btn-danger pull-right RbtnMargin",  :method => :delete %><% if current_user.role == "Admin" %><%= link_to "Logovi", export_xmls_history_path, class: "btn btn-warning pull-right" %><% end %>
 
   <div class="page-header head-page">
     <h1>OPZ-STAT-1 obrasci</h1>

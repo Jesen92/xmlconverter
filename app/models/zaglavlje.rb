@@ -1,4 +1,6 @@
 class Zaglavlje < ActiveRecord::Base
+  has_paper_trail
+
   has_one :import_log
   has_one :opzstat
 
@@ -13,6 +15,9 @@ class Zaglavlje < ActiveRecord::Base
   accepts_nested_attributes_for :racuns, reject_if: :all_blank
 
   def self.import_job(file, user_id)
+
+    PaperTrail.whodunnit = user_id
+
     message, zaglavlje_id = self.import_xlsx(file, user_id)
 
     if message.include? "Pogreška"
@@ -24,7 +29,9 @@ class Zaglavlje < ActiveRecord::Base
       ImportLog.create(user_id: user_id,message: message, seen: 0)
     else
       ImportLog.create(user_id: user_id,message: message,zaglavlje_id: zaglavlje_id, seen: 0)
-      Zaglavlje.find(zaglavlje_id).update(created: true)
+      zaglavlje = Zaglavlje.find(zaglavlje_id)
+      zaglavlje.created = true
+      zaglavlje.save
       file.zaglavlje_id = zaglavlje_id
       file.save
     end
@@ -39,6 +46,7 @@ class Zaglavlje < ActiveRecord::Base
   end
 
   def self.import_xlsx(file, user_id)
+    PaperTrail.whodunnit = user_id
     #@svi_kupci = Kupac.all
     puts "usao je u import_xlsx"
     @zaglavlje_id = 0
@@ -62,32 +70,6 @@ class Zaglavlje < ActiveRecord::Base
       return message, 0
     end
 
-=begin
-    if article.na_dan == Date.new(Date.today.year-1,12,31)
-      article.nisu_naplaceni_do = Date.new(Date.today.year,1,31)
-      article.datum_od = Date.new(Date.today.year-1, 10, 1)
-      article.datum_do = article.na_dan
-    elsif article.na_dan == Date.new(Date.today.year,3,31)
-      article.nisu_naplaceni_do = Date.new(Date.today.year,4,30)
-      article.datum_od = Date.new(Date.today.year, 1, 1)
-      article.datum_do = article.na_dan
-    elsif article.na_dan == Date.new(Date.today.year,6,30)
-      article.nisu_naplaceni_do = Date.new(Date.today.year,7,31)
-      article.datum_od = Date.new(Date.today.year, 4, 1)
-      article.datum_do = article.na_dan
-    elsif article.na_dan == Date.new(Date.today.year,9,30)
-      article.nisu_naplaceni_do = Date.new(Date.today.year,10,31)
-      article.datum_od = Date.new(Date.today.year, 7, 1)
-      article.datum_do = article.na_dan
-    elsif article.na_dan == Date.new(Date.today.year,12,31)
-      article.nisu_naplaceni_do = Date.new(Date.today.year,1,31)
-      article.datum_od = Date.new(Date.today.year, 10, 1)
-      article.datum_do = article.na_dan
-    else
-      return "Pogreška! U listi 'zaglavlje' stupac 'na_dan' nije ispravan!"
-    end
-=end
-
     article.save!
     @zaglavlje_id = article.id
     @kupci = {}
@@ -108,15 +90,7 @@ class Zaglavlje < ActiveRecord::Base
       article.zaglavlje_id = @zaglavlje_id #postavljanje id-a od kreiranog zaglavlja
       article.user_id = user_id
       article.save!
-=begin
-      if article.porezni_broj != nil
-        @kupci[article.porezni_broj] = article.id
-      elsif article.pdv_identifikacijski_broj != nil
-        @kupci[article.pdv_identifikacijski_broj] = article.id
-      elsif article.ostali_brojevi != nil
-        @kupci[article.ostali_brojevi] = article.id
-      end
-=end
+
     end
 
     racuni = spreadsheet.sheet(2) #racuni

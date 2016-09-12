@@ -1,4 +1,6 @@
 class Kupac < ActiveRecord::Base
+  has_paper_trail
+
   has_many :kupac_zaglavljes
   has_many :zaglavljes, :through => :kupac_zaglavljes
   accepts_nested_attributes_for :zaglavljes, reject_if: :all_blank

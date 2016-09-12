@@ -52,8 +52,12 @@ class ExportXmlsController < ApplicationController
   end
 
   def edit
-    @zaglavlje = Zaglavlje.find(params[:id])
+    @zaglavlje = Zaglavlje.find_by(id: params[:id])
 
+    if @zaglavlje == nil
+      flash[:alert] = "Obrazac ne postoji ili je izbrisan!"
+      redirect_to(:back)
+    end
     gon.mycounter = 1
     gon.billcounter = 1
   end
@@ -167,7 +171,7 @@ class ExportXmlsController < ApplicationController
       end
 
     else
-      CreateOpzStat1.new(params, current_user.id).create_opz_stat1
+      CreateOpzStat1.new(params, current_user.id).delay.create_opz_stat1
     end
 
     #Kupac.check_duplicate_values() - problem kod postavljanja id-a od racuna i problem jer sadrzi id od zaglavlja
@@ -217,10 +221,19 @@ class ExportXmlsController < ApplicationController
     )
   end
 
+  def history
+    if current_user.role == "Admin"
+      @zaglavlje_history = PaperTrail::Version.order('created_at DESC').page(params[:page]).per(5)
+    else
+      flash[:alert] = "Morate biti administrator da bi pristupili logovima!"
+      redirect_to(:back)
+    end
+  end
+
   private
 
   def project_params
-    params.require(:zaglavlje).permit( :opz_ukupan_iznos_pdv, :opz_ukupan_iznos_racuna_s_pdv, :created_at, :updated_at,:oib, :naziv, :mjesto, :ulica, :broj, :email, :sastavio_ime, :sastavio_prezime, :sastavio_email, :sastavio_tel, :sastavio_fax ,:description, :datum_od, :datum_do, :na_dan, :nisu_naplaceni_do)
+    params.require(:zaglavlje).permit( :opz_ukupan_iznos_pdv, :opz_ukupan_iznos_racuna_s_pdv, :created_at, :updated_at,:oib, :naziv, :mjesto, :ulica, :broj, :email, :description, :datum_od, :datum_do, :na_dan, :nisu_naplaceni_do)
 
   end
 

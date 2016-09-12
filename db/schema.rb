@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160908134550) do
+ActiveRecord::Schema.define(version: 20160912133749) do
 
   create_table "delayed_jobs", force: :cascade do |t|
     t.integer  "priority",   limit: 4,          default: 0, null: false
@@ -61,12 +61,12 @@ ActiveRecord::Schema.define(version: 20160908134550) do
   end
 
   create_table "import_logs", force: :cascade do |t|
-    t.string   "message",      limit: 255
     t.integer  "zaglavlje_id", limit: 4
     t.integer  "user_id",      limit: 4
-    t.datetime "created_at",               null: false
-    t.datetime "updated_at",               null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
     t.integer  "seen",         limit: 4
+    t.text     "message",      limit: 65535
   end
 
   create_table "kupac_racuns", force: :cascade do |t|
@@ -152,6 +152,18 @@ ActiveRecord::Schema.define(version: 20160908134550) do
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
 
+  create_table "versions", force: :cascade do |t|
+    t.string   "item_type",      limit: 255,        null: false
+    t.integer  "item_id",        limit: 4,          null: false
+    t.string   "event",          limit: 255,        null: false
+    t.string   "whodunnit",      limit: 255
+    t.text     "object",         limit: 4294967295
+    t.datetime "created_at"
+    t.text     "object_changes", limit: 65535
+  end
+
+  add_index "versions", ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id", using: :btree
+
   create_table "zaglavljes", force: :cascade do |t|
     t.date     "datum_od"
     t.date     "datum_do"
@@ -160,11 +172,6 @@ ActiveRecord::Schema.define(version: 20160908134550) do
     t.string   "ulica",                         limit: 255
     t.string   "broj",                          limit: 255
     t.string   "email",                         limit: 255
-    t.string   "sastavio_ime",                  limit: 255
-    t.string   "sastavio_prezime",              limit: 255
-    t.string   "sastavio_tel",                  limit: 255
-    t.string   "sastavio_fax",                  limit: 255
-    t.string   "sastavio_email",                limit: 255
     t.date     "na_dan"
     t.date     "nisu_naplaceni_do"
     t.datetime "created_at",                                                         null: false

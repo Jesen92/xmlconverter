@@ -1,10 +1,14 @@
 class CreateOpzStat1
+
   def initialize(params, user_id)
     @user_id = user_id
     @params = params
+
   end
 
   def create_opz_stat1
+
+    PaperTrail.whodunnit = @user_id
 
     @obrazac = Zaglavlje.new(@params.require(:zaglavlje).permit( :opz_ukupan_iznos_pdv, :opz_ukupan_iznos_racuna_s_pdv, :created_at, :updated_at,:oib, :naziv, :mjesto, :ulica, :broj, :email, :sastavio_ime, :sastavio_prezime, :sastavio_email, :sastavio_tel, :sastavio_fax ,:description, :datum_od, :datum_do, :na_dan, :nisu_naplaceni_do))
     @obrazac.user_id = @user_id
@@ -51,6 +55,7 @@ class CreateOpzStat1
 
       next if kupac["_destroy"] == "1"
 
+      puts "11111"
       @kupac_zaglavlje = KupacZaglavlje.new()
 
 
@@ -65,23 +70,26 @@ class CreateOpzStat1
         next if racun["_destroy"] == "1"
         next if racun[:broj_izdanog_racuna] == nil
 
+        puts "22222"
         @kupac_racun = KupacRacun.new()
 
-        @racun = Racun.new(racun.except(:id,:_destroy))
+        puts "333333"
+        @racun = Racun.new(racun.permit(:created_at, :updated_at, :iznos_racuna, :iznos_pdv, :placeni_iznos_racuna ,:kupac_id, :broj_izdanog_racuna, :broj_dana_kasnjenja, :datum_izdanog_racuna, :valuta_placanja_racuna))
         @racun.zaglavlje_id = @obrazac.id
-
+        puts "44444"
         @racun.save
 
         @kupac_racun.racun_id = @racun.id
         @kupac_racun.kupac_id = kupac[:id]
         @kupac_racun.save
-
+        puts "55555"
 
       end
 
     end
     ImportLog.create(message: "Ispravno", zaglavlje_id: @obrazac.id, user_id: @user_id, seen: 0)
     @obrazac.created = true
+    @obrazac.versions.last.whodunnit = @user_id
     @obrazac.save
 
   rescue => e

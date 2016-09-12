@@ -1,0 +1,27 @@
+<%= link_to "Povratak", export_xmls_index_path, class: "btn btn-primary" %>
+<div class="container">
+  <div class="page-header head-page">
+    <h1>Povijest</h1>
+  </div>
+  <ul>
+    <% @zaglavlje_history.each do |version| %>
+        <li>
+          <%= l(version.created_at, format: "%-d.%m.%Y %H:%M:%S %Z") %><br/>
+          Event ID: <%= version.id %><br/>
+          <% @user = User.find_by(id: version.whodunnit) %>
+          <b>Korisnik:</b> <%= @user != nil ? @user.name+" "+@user.surname : "- - -" %> <br/>
+          <b>Tablica nad kojoj su se vrsile promjene:</b> <%= version.item_type == "Zaglavlje" ? "Obrazac" : version.item_type %>
+          <small>(id: <%= version.item_id %>)</small>; <b>Akcija</b> <%= version.event %>;<br/>
+          <div>
+            Vise informacija:
+            <pre><%= version.object %></pre>
+          </div>
+          <div>
+            Izmjene:
+            <pre><%= version.changeset %></pre>
+          </div>
+        </li>
+    <% end %>
+    <%= paginate @zaglavlje_history %>
+  </ul>
+</div>
