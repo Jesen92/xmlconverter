@@ -51,6 +51,11 @@ class ExportXmlsController < ApplicationController
   def create
   end
 
+  def loading_screen
+    render stream: true
+
+  end
+
   def edit
     @zaglavlje = Zaglavlje.find_by(id: params[:id])
 

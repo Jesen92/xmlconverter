@@ -10,6 +10,13 @@ hr:
         few: "%{count} greške sprečavaju snimanje %{resource}:"
         other: "%{count} grešaka sprečavaju snimanje %{resource}:"
 
+  views:
+    pagination:
+      first: "&laquo; Prva"
+      last: "Zadnji &raquo;"
+      previous: "&lsaquo; Prošla"
+      next: "Sljedeća &rsaquo;"
+      truncate: "..."
   devise:
     failure:
       already_authenticated: 'Već ste prijavljeni.'

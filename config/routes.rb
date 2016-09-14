@@ -40,9 +40,7 @@ Rails.application.routes.draw do
 
   get 'export_xmls/download_xlsx_primjer' => "export_xmls#download_xlsx_primjer", :as => 'download_xlsx_primjer'
 
-  get 'export_xmls/loading_screen' => "export_xmls#import_kupac" , :as => 'import_kupac'
-
-  get 'export_xmls/loading_screen' => "export_xmls#import_racun" , :as => 'import_racun'
+  get 'export_xmls/loading_screen' => "export_xmls#loading_screen" , :as => 'loading_screen'
 
   get 'export_xmls/set_notification_seen' => "export_xmls#set_notification_seen", :as => 'set_notification_seen'
 
@@ -77,6 +75,7 @@ Rails.application.routes.draw do
     put :import_racun, on: :collection
     put :set_notification_seen, on: :collection
     get :history, on: :collection
+    put :loading_screen, on: :collection
   end
     resources :kupacs
     resources :generate_pdf
