@@ -52,6 +52,8 @@ gem "daemons"
 gem 'exception_notification', '~> 4.2', '>= 4.2.1'
 
 gem 'paper_trail'
+
+gem 'activerecord-session_store'
 ############################## za upload file-ova
 gem "paperclip", "~> 5.0.0"
 gem 'aws-sdk', '~> 2.3.0'

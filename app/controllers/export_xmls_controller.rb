@@ -147,7 +147,7 @@ class ExportXmlsController < ApplicationController
     #  number_to_currency(1234567890.50, unit: "R$", separator: ",", delimiter: "")
     # => R$1234567890,50
 
-      builder, is_created = CreateOpzStat1Xml.new(@zaglavlje, current_user).delay.create_opz_stat1_xml
+      builder, is_created = CreateOpzStat1Xml.new(@zaglavlje, current_user).create_opz_stat1_xml
 
       if is_created
         export_myxml(builder)
@@ -177,13 +177,15 @@ class ExportXmlsController < ApplicationController
 
     else
       CreateOpzStat1.new(params, current_user.id).delay.create_opz_stat1
+
+      flash[:notice] = "Podaci se obrađuju! Dobiti ćete notifikaciju o statusu izrade obrasca!"
+
+      redirect_to export_xmls_index_path
     end
 
     #Kupac.check_duplicate_values() - problem kod postavljanja id-a od racuna i problem jer sadrzi id od zaglavlja
 
-    flash[:notice] = "Podaci se obrađuju! Dobiti ćete notifikaciju o statusu izrade obrasca!"
 
-    redirect_to export_xmls_index_path
   end
 
   def destroy
