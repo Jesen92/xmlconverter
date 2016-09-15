@@ -34,9 +34,15 @@ Rails.application.routes.draw do
 
   match 'export_xmls/import_create' => "export_xmls#import_create", :as => 'import_create', via: :post
 
+  get 'kupacs/import' => "kupacs#import", :as => 'kupac_import'
+
+  get 'kupacs/import_create' => "kupacs#import_create", :as => 'kupac_import_create'
+
   get 'export_xmls/download_pdf' => "export_xmls#download_pdf", :as => 'download_pdf'
 
   get 'export_xmls/download_xlsx' => "export_xmls#download_xlsx", :as => 'download_xlsx'
+
+  get 'kupacs/download_kupci_xlsx' => "kupacs#download_kupci_xlsx", :as => 'download_kupci_xlsx'
 
   get 'export_xmls/download_xlsx_primjer' => "export_xmls#download_xlsx_primjer", :as => 'download_xlsx_primjer'
 
@@ -45,6 +51,10 @@ Rails.application.routes.draw do
   get 'export_xmls/set_notification_seen' => "export_xmls#set_notification_seen", :as => 'set_notification_seen'
 
   get 'export_xmls/history' => 'export_xmls#history', :as => :export_xmls_history
+
+  get 'kupacs/name_conflict' => 'kupacs#name_conflict', :as => :kupac_name_conflict
+
+  get 'kupacs/update_multiple' => 'kupacs#update_multiple', :as => :kupac_update_multiple
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
@@ -77,7 +87,13 @@ Rails.application.routes.draw do
     get :history, on: :collection
     put :loading_screen, on: :collection
   end
-    resources :kupacs
+    resources :kupacs do
+      get :download_kupci_xlsx, on: :collection
+      get :import, on: :collection
+      put :import_create, on: :collection
+      put :name_conflict, on: :collection
+      post :update_multiple, on: :collection
+    end
     resources :generate_pdf
 
   # Example of regular route:

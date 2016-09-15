@@ -13,32 +13,63 @@ class Kupac < ActiveRecord::Base
 
   validates :naziv_kupca, presence: true
 
-  def self.check_duplicate_values
-    grouped = all.group_by{|model| [model.porezni_broj] }
+  def self.import_xlsx(file, user_id)
+    PaperTrail.whodunnit = user_id
 
-    grouped.values.each do |duplicates|
-      first_one = duplicates.shift
+    kupac_hash = {}
 
-      duplicates.each{|double| double.destroy} #duplikati se brišu
+    spreadsheet = open_spreadsheet(file)
+    kupci = spreadsheet.sheet(0) #kupci
+    kupci_header = kupci.row(1)
+
+    (2..kupci.last_row).each do |i|
+      @error_red = i.to_s
+      row = Hash[[kupci_header, kupci.row(i)].transpose]
+
+      kupac = Kupac.new   #find_by_id(row["id"]) || - ako ce se mijenjati vrijednosti preko excel tablica
+      kupac.attributes = row.to_hash.slice(*row.to_hash.keys)
+
+      isDuplicate, naziv_kupca = self.check_if_duplicates(kupac)
+
+      if naziv_kupca["0"] == nil
+        kupac_hash = kupac_hash.merge(naziv_kupca)
+      end
+
+      next if isDuplicate
+
+      kupac.user_id = user_id
+      kupac.save!
     end
 
+    return "Ispravno", kupac_hash
+
+  rescue => e
+    return "Pogreška!\nPogreška se nalazi u redu broj #{@error_red} ili u zaglavlju!\nError message: #{e.message}", nil
   end
 
-  def self.check_if_duplicate(params)
+  def self.open_spreadsheet(file)
+    case File.extname(file.original_filename)
+      when ".csv" then Roo::Csv.new(file.path, nil, :ignore)
+      when ".xls" then Roo::Excel.new(file.path, nil, :ignore)
+      when ".xlsx" then Roo::Excelx.new(file.path)
+      else raise "Unknown file type: #{File.extname(file)}"
+    end
+  end
 
-    puts "Porezni broj:"+params[:porezni_broj]
+  def self.check_if_duplicates(_kupac)
+    @kupac = Kupac.find_by("porezni_broj = ? AND porezni_broj IS NOT NULL OR pdv_identifikacijski_broj = ? AND pdv_identifikacijski_broj IS NOT NULL OR ostali_brojevi = ? AND ostali_brojevi IS NOT NULL",_kupac.porezni_broj, _kupac.pdv_identifikacijski_broj, _kupac.ostali_brojevi)
 
-    all.each do |kupac|
-      if kupac.porezni_broj == params[:porezni_broj]
-        return "U bazi postoji kupac sa istim OIB-om! Kupac nije spremljen!"
-      elsif !kupac.pdv_identifikacijski_broj.nil? && kupac.pdv_identifikacijski_broj == params[:pdv_identifikacijski_broj]
-        return "U bazi postoji kupac sa istim pdv identifikacijskim brojem! Kupac nije spremljen!"
-      elsif !kupac.ostali_brojevi.nil? && kupac.ostali_brojevi == params[:ostali_brojevi]
-        return "U bazi postoji kupac sa istim ostalim brojevima! Kupac nije spremljen!"
+    if @kupac.nil?
+      puts "Zapisujem kupca: "+_kupac.naziv_kupca
+      return false
+    else
+      if @kupac.naziv_kupca == _kupac.naziv_kupca
+        return true, { 0 => "0"}
+      else
+        puts "Nije isti!"
+        return true, { @kupac.id => _kupac.naziv_kupca}
       end
     end
-
-    return false
   end
 
 end

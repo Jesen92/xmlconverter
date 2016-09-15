@@ -1,0 +1,17 @@
+<div class="page-header head-page">
+  <h1>Uvezite XLSX tablicu s kupcima</h1>
+</div>
+
+<h3>Download</h3>
+<div class="list-group">
+  <%= link_to download_kupci_xlsx_path, class: "list-group-item" do %>
+      <h4 class="list-group-item-heading">XLSX tablica</h4>
+      <p class="list-group-item-text">Microsoft Excel šablona za dodavanje kupaca</p>
+  <% end %>
+</div>
+
+<%= simple_form_for @document, url: kupac_import_create_path, method: :put,html: {class: 'form-horizontal', multipart: true} do |form| %>
+    <%= form.input :document, as: :file %>
+
+    <%= form.submit "Uvezi", class:"btn btn-success" %>
+<% end %>

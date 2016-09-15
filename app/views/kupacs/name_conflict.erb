@@ -1,0 +1,23 @@
+<%= form_tag kupac_update_multiple_path,tag: "kupci", method: :post, multipart: true do %>
+    <% @kupacs.each do |kupac| %>
+
+        <div class="page-header head-page" >
+          <h1><%= kupac.naziv_kupca %><small> Stari naziv kupca</small></h1>
+        </div>
+
+    <%= simple_fields_for "Kupac"+kupac.id.to_s,  kupac, html: {class: 'form-horizontal'} do |f| %>
+            <%= f.input :naziv_kupca, label: "Novi naziv kupca", input_html: {value: @kupac_hash[f.object.id.to_s] },required: true %>
+
+            <div class="row">
+              <div class="col-md-4 input_pad"><%= f.input :porezni_broj, label: "OIB" %></div>
+              <div class="col-md-4 input_pad"><%= f.input :pdv_identifikacijski_broj %></div>
+              <div class="col-md-4 input_pad"v><%= f.input :ostali_brojevi %></div>
+            </div>
+     <% end %>
+        <div class="page-header head-page" >
+          <h1></h1>
+        </div>
+    <% end %>
+        <%= submit_tag "Potvrdi izmjene", class: "btn btn-success" %>
+        <%= link_to "Prekid izmjena", kupacs_index_path, class: "btn btn-default", method: :get %>
+<% end %>

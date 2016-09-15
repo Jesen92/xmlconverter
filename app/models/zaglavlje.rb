@@ -74,26 +74,7 @@ class Zaglavlje < ActiveRecord::Base
     @zaglavlje_id = article.id
     @kupci = {}
 
-    kupci = spreadsheet.sheet(1) #kupci
-    kupci_header = kupci.row(1)
-
-    @error_log = "Kupci"
-    (2..kupci.last_row).each do |i|
-      @error_red = i.to_s
-      row = Hash[[kupci_header, kupci.row(i)].transpose]
-
-      article = Kupac.new   #find_by_id(row["id"]) || - ako ce se mijenjati vrijednosti preko excel tablica
-      article.attributes = row.to_hash.slice(*row.to_hash.keys)
-
-      next if self.check_if_duplicates(article)
-
-      article.zaglavlje_id = @zaglavlje_id #postavljanje id-a od kreiranog zaglavlja
-      article.user_id = user_id
-      article.save!
-
-    end
-
-    racuni = spreadsheet.sheet(2) #racuni
+    racuni = spreadsheet.sheet(1) #racuni
     racuni_header = racuni.row(1)
 
     @error_log = "Racuni"
