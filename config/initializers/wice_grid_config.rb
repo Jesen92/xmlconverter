@@ -44,7 +44,7 @@ if defined?(Wice::Defaults)
   Wice::Defaults::AUTO_RELOAD = false
 
   # SQL operator used for matching strings in string filters.
-  Wice::Defaults::STRING_MATCHING_OPERATOR = 'LIKE'
+  Wice::Defaults::STRING_MATCHING_OPERATOR = 'CI_LIKE'
   # STRING_MATCHING_OPERATOR = 'ILIKE' # Use this for Postgresql case-insensitive matching.
 
   # Defining one string matching operator globally for the whole application turns is not enough

@@ -4,7 +4,7 @@
     t.id
   end
 
-  g.column name: 'Naziv', attribute: 'naziv_kupca' do |t|
+  g.column name: 'Naziv', attribute: 'naziv_kupca', filter: :string do |t|
     t.naziv_kupca
   end
 

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160915065422) do
+ActiveRecord::Schema.define(version: 20160916113019) do
 
   create_table "delayed_jobs", force: :cascade do |t|
     t.integer  "priority",   limit: 4,          default: 0, null: false
@@ -94,6 +94,7 @@ ActiveRecord::Schema.define(version: 20160915065422) do
     t.string   "pdv_identifikacijski_broj", limit: 255
     t.string   "ostali_brojevi",            limit: 255
     t.integer  "user_id",                   limit: 4
+    t.boolean  "potvrdi_naziv"
   end
 
   create_table "opzstats", force: :cascade do |t|

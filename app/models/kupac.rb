@@ -11,6 +11,7 @@ class Kupac < ActiveRecord::Base
 
   belongs_to :user
 
+
   validates :naziv_kupca, presence: true
 
   def self.import_xlsx(file, user_id)

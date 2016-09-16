@@ -6,7 +6,10 @@
         </div>
 
     <%= simple_fields_for "Kupac"+kupac.id.to_s,  kupac, html: {class: 'form-horizontal'} do |f| %>
+
             <%= f.input :naziv_kupca, label: "Novi naziv kupca", input_html: {value: @kupac_hash[f.object.id.to_s] },required: true %>
+
+            <%= f.input :potvrdi_naziv, label: "Postavi stari naziv", input_html: { onchange:"stari_naziv(#{f.object.id})" } %>
 
             <div class="row">
               <div class="col-md-4 input_pad"><%= f.input :porezni_broj, label: "OIB" %></div>
@@ -21,3 +24,16 @@
         <%= submit_tag "Potvrdi izmjene", class: "btn btn-success" %>
         <%= link_to "Prekid izmjena", kupacs_index_path, class: "btn btn-default", method: :get %>
 <% end %>
+
+<script>
+  function stari_naziv(id){
+    var naziv = document.getElementById("Kupac"+id+"_naziv_kupca");
+
+    if( naziv.disabled == true){
+      naziv.disabled = false;
+    }else{
+      naziv.disabled = true;
+    }
+
+  }
+</script>

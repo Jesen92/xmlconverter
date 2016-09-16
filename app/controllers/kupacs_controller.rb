@@ -34,7 +34,10 @@ class KupacsController < ApplicationController
     params.each do |key, value|
       next if !key.include? "Kupac"
       kupac = Kupac.find(key.tr('Kupac', ''))
-      kupac.naziv_kupca = value[:naziv_kupca]
+
+      if value[:potvrdi_naziv] == '0'
+        kupac.naziv_kupca = value[:naziv_kupca]
+      end
       kupac.porezni_broj = value[:porezni_broj]
       kupac.pdv_identifikacijski_broj = value[:pdv_identifikacijski_broj]
       kupac.ostali_brojevi = value[:ostali_brojevi]
