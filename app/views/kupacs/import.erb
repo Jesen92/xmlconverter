@@ -13,5 +13,5 @@
 <%= simple_form_for @document, url: kupac_import_create_path, method: :put,html: {class: 'form-horizontal', multipart: true} do |form| %>
     <%= form.input :document, as: :file %>
 
-    <%= form.submit "Uvezi", class:"btn btn-success" %>
+    <%= form.submit "Uvezi", class:"btn btn-success" %>  <%= link_to "Prekid unosa", kupacs_index_path, class: "btn btn-warning pull-right" %>
 <% end %>
