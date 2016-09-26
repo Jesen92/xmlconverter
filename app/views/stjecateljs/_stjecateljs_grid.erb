@@ -1,0 +1,39 @@
+<%= grid(@stjecateljs_grid, show_filters: :always) do |g|
+
+  g.column name: 'Id', attribute: 'id', filter: false do |t|
+    t.id
+  end
+
+  g.column name: 'Ime i prezime', attribute: 'b5', filter: :string do |t|
+    t.b5
+  end
+
+  g.column name: 'OIB', attribute: 'b4' do |t|
+    t.b4
+  end
+
+  g.column name: 'Kreirano', attribute: 'created_at', :filter => :jquery_datepicker do |t|
+    t.created_at.strftime("%d.%m.%Y. %H:%M")
+  end
+
+  g.column name: 'Izmijenjeno', attribute: 'updated_at', :filter => :jquery_datepicker do |t|
+    t.updated_at.strftime("%d.%m.%Y. %H:%M")
+  end
+
+  g.column name: 'Zadnje izmijenio', attribute: 'name', :assoc => :user, :filter => false do |t|
+    if t.user != nil
+      t.user.name+" "+t.user.surname
+    else
+      "Korisnik ne postoji"
+    end
+  end
+
+  g.column do |t|
+    link_to("Pregled", stjecateljs_show_path(id: t.id))
+  end
+
+  g.column do |t|
+    link_to("Uredi", stjecateljs_edit_path(id: t.id), :method => :get)+" / "+link_to('Izbriši', stjecatelj_path(t.id), method: :delete, data: { confirm: 'Jeste li sigurni?' })
+  end
+
+end -%>

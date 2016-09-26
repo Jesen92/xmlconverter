@@ -1,0 +1,21 @@
+<div class="page-header head-page">
+  <h1>Uvezite XLSX tablicu sa stjecateljima</h1>
+</div>
+
+<h3>Download</h3>
+<div class="list-group">
+  <%= link_to stjecateljs_download_xlsx_path, class: "list-group-item" do %>
+      <h4 class="list-group-item-heading">XLSX tablica</h4>
+      <p class="list-group-item-text">Microsoft Excel šablona za dodavanje stjecatelja</p>
+  <% end %>
+  <%= link_to stjecateljs_download_xlsx_primjer_path, class: "list-group-item" do %>
+      <h4 class="list-group-item-heading">Primjer XLSX tablica</h4>
+      <p class="list-group-item-text">Primjer pravilno ispunjene tablice za dodavanje stjecatelja</p>
+  <% end %>
+</div>
+
+<%= simple_form_for @document, url: stjecateljs_import_create_path ,html: {class: 'form-horizontal', multipart: true} do |form| %>
+    <%= form.input :document, as: :file %>
+
+    <%= form.submit "Uvezi", class:"btn btn-success" %> <%= link_to "Prekid unosa", stjecateljs_index_path, class: "btn btn-warning pull-right" %>
+<% end %>

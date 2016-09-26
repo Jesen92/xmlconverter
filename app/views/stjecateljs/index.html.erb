@@ -1,0 +1,18 @@
+<div class="btn-group" >
+  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Stjecatellj <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu">
+    <li><%= link_to "Novi stjecatelj", stjecateljs_new_path %></li>
+    <li><%= link_to "Uvezi XLSX tablicu s stjecateljima", stjecateljs_import_path %></li>
+  </ul>
+</div>
+
+<%= link_to "Odjavi se", destroy_user_session_path, class: "btn btn-danger pull-right ",  :method => :delete %>
+
+
+<div class="page-header head-page">
+  <h1>Stjecatelji</h1>
+</div>
+
+<%= render partial: 'stjecateljs/stjecateljs_grid' %>

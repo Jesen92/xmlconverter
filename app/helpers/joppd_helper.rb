@@ -1,0 +1,2 @@
+module JoppdHelper
+end

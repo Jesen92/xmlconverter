@@ -1,0 +1,53 @@
+<div class="page-header head-page">
+  <h1>Uredi Stjecatelja</h1>
+</div>
+
+<%= simple_form_for @stjecatelj, html: {class: 'form-horizontal', multipart: true} do |f| %>
+
+    <div class="row">
+      <div class="col-md-6 input_pad">
+        <%= f.input :b5, label: "Ime i prezime", required: true %>
+      </div>
+      <div class="col-md-6 input_pad">
+        <%= f.input :b4, label: "OIB", required: true %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4 input_pad">
+        <%= f.input :b2, label: "Sifra općine/grada prebivališta/boravišta", input_html: {value: f.object.b2 || '00000'}, required: true %>
+      </div>
+      <div class="col-md-4 input_pad">
+        <%= f.input :b3, label: "Sifra opcine/grada rada", input_html: {value: f.object.b3 || '00000'}, required: true %>
+      </div>
+      <div class="col-md-4 input_pad">
+        <%= f.input :b6_1, label: "Oznaka stjecatelja", input_html: {value: f.object.b6_1 || '0000'}, required: true %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4 input_pad">
+        <%= f.input :b6_2, label: "Oznaka primitka/obveze doprinosa", input_html: {value: f.object.b6_2 || '0000'}, required: true %>
+      </div>
+      <div class="col-md-4 input_pad">
+        <%= f.input :b7_1, label: "Obveza dodatnok doprinosa", required: true %>
+      </div>
+      <div class="col-md-4 input_pad">
+        <%= f.input :b7_2, label: "Obveza posebnog doprinosa (osobe s invaliditetom)", required: true %>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-4 input_pad">
+        <%= f.input :b8, label: "Oznaka prvog/zadnjeg mjeseca osiguranja", required: true %>
+      </div>
+      <div class="col-md-4 input_pad">
+        <%= f.input :b9, label: "Oznaka punog/nepunog radnog vremena", required: true %>
+      </div>
+      <div class="col-md-4 input_pad">
+        <%= f.input :b10, label: "Sati rada", required: true %>
+      </div>
+    </div>
+
+    <div class="page-header head-page">
+      <h1></h1>
+    </div>
+    <%= f.button :submit, value: "Izmijeni Stjecatelja", class: "btn btn-success", :method => :put %> <%= link_to "Prekid unosa", stjecateljs_index_path, class: "btn btn-warning pull-right", data: { confirm: 'Jeste li sigurni da želite prekid unosa?' } %>
+<% end %>

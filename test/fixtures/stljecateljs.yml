@@ -1,0 +1,27 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  b2: 1
+  b3: 1
+  b4: MyString
+  b5: MyString
+  b6_1: 1
+  b6_2: 1
+  b7_1: 1
+  b7_2: 1
+  b8: 1
+  b9: 1
+  b10: 1
+
+two:
+  b2: 1
+  b3: 1
+  b4: MyString
+  b5: MyString
+  b6_1: 1
+  b6_2: 1
+  b7_1: 1
+  b7_2: 1
+  b8: 1
+  b9: 1
+  b10: 1

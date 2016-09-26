@@ -1,5 +1,53 @@
 Rails.application.routes.draw do
 
+  get 'stjecateljs/create'
+
+  get 'stjecateljs/new'
+
+  get 'stjecateljs/update'
+
+  get 'stjecateljs/edit'
+
+  get 'stjecateljs/show'
+
+  get 'stjecateljs/index'
+
+  get 'stjecateljs/destroy'
+
+  get 'stjecateljs/import'
+
+  get 'stjecateljs/import_create'
+
+  get 'stjecateljs/download_xlsx' => "stjecateljs#download_xlsx", as: "stjecateljs_download_xlsx"
+
+  get 'stjecateljs/download_xlsx_primjer' => "stjecateljs#download_xlsx_primjer", as: "stjecateljs_download_xlsx_primjer"
+
+  get 'joppd/create'
+
+  get 'joppd/new'
+
+  get 'joppd/update'
+
+  get 'joppd/edit'
+
+  get 'joppd/show'
+
+  get 'joppd/index'
+
+  get 'joppd/destroy'
+
+  get 'joppd/import'
+
+  get 'joppd/import_create'
+
+  get 'joppd/set_notification_seen'
+
+  get 'joppd/export_myxml'
+
+  get 'joppd/download_xlsx'
+
+  get 'joppd/download_xlsx_primjer'
+
   get 'generate_pdf/show'
 
   get 'kupacs/new'
@@ -95,6 +143,19 @@ Rails.application.routes.draw do
       post :update_multiple, on: :collection
     end
     resources :generate_pdf
+    resources :joppd do
+      get :import, on: :collection
+      post :import_create, on: :collection
+      put :set_notification_seen, on: :collection
+      get :download_xlsx, on: :collection
+      get :download_xlsx_primjer, on: :collection
+    end
+    resources :stjecateljs do
+      get :import, on: :collection
+      post :import_create, on: :collection
+      get :download_xlsx, on: :collection
+      get :download_xlsx_primjer, on: :collection
+    end
 
   # Example of regular route:
   #   get 'products/:id' => 'catalog#view'

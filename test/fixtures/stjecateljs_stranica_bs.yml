@@ -1,0 +1,9 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  stjecatelj_id: 1
+  stranica_b_id: 1
+
+two:
+  stjecatelj_id: 1
+  stranica_b_id: 1
