@@ -76,4 +76,21 @@ class Kupac < ActiveRecord::Base
     end
   end
 
+  def self.check_if_duplicate_create(params)
+    kupci = Kupac.all
+    puts "Porezni broj:"+params[:porezni_broj]
+
+    kupci.each do |kupac|
+      if kupac.porezni_broj != '' && kupac.porezni_broj == params[:porezni_broj]
+        return "U bazi postoji kupac sa istim OIB-om! Kupac nije spremljen!"
+      elsif kupac.pdv_identifikacijski_broj != '' && kupac.pdv_identifikacijski_broj == params[:pdv_identifikacijski_broj]
+        return "U bazi postoji kupac sa istim pdv identifikacijskim brojem! Kupac nije spremljen!"
+      elsif kupac.ostali_brojevi != '' && kupac.ostali_brojevi == params[:ostali_brojevi]
+        return "U bazi postoji kupac sa istim ostalim brojevima! Kupac nije spremljen!"
+      end
+    end
+
+    return false
+  end
+
 end

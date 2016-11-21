@@ -64,7 +64,7 @@ class KupacsController < ApplicationController
   end
 
   def create
-    @poruka = Kupac.check_if_duplicate(params[:kupac])
+    @poruka = Kupac.check_if_duplicate_create(params[:kupac])
 
     if @poruka != false
      flash[:alert] = @poruka
