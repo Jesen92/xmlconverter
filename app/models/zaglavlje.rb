@@ -79,6 +79,7 @@ class Zaglavlje < ActiveRecord::Base
 
     @error_log = "Racuni"
     (2..racuni.last_row).each do |i|
+      @kupac = nil
       @error_red = i.to_s
       row = Hash[[racuni_header, racuni.row(i)].transpose]
       article = Racun.new   #find_by_id(row["id"]) || - ako ce se mijenjati vrijednosti preko excel tablica
@@ -89,22 +90,24 @@ class Zaglavlje < ActiveRecord::Base
       if Kupac.find_by(porezni_broj: article.porezni_broj_kupca)
         @kupac = Kupac.find_by(porezni_broj: article.porezni_broj_kupca)
         @oznaka_poreznog_broja = 1
-        #puts "Usao1"
+        puts "Usao1"
       elsif Kupac.find_by(pdv_identifikacijski_broj: article.porezni_broj_kupca)
         @kupac = Kupac.find_by(pdv_identifikacijski_broj: article.porezni_broj_kupca)
         @oznaka_poreznog_broja = 2
-        #puts "Usao2"
+        puts "Usao2"
       elsif Kupac.find_by(ostali_brojevi: article.porezni_broj_kupca)
         @kupac = Kupac.find_by(ostali_brojevi: article.porezni_broj_kupca)
         @oznaka_poreznog_broja = 3
-        #puts "Usao3"
+        puts "Usao3"
       end
 
       if @kupac.nil?
         return "Pogreška! Ne postoji kupac u bazi sa poreznim brojem #{article.porezni_broj_kupca}!", @zaglavlje_id
       end
 
-      if KupacZaglavlje.where(kupac_id: @kupac.id, zaglavlje_id: @zaglavlje_id).empty?
+      puts "Ispred KupacZaglavlje: "+@kupac.id.to_s+" kupac"
+      if KupacZaglavlje.find_by(kupac_id: @kupac.id, zaglavlje_id: @zaglavlje_id).nil?
+        puts "Usao u KupacZaglavlje: "+@kupac.id.to_s+" kupac"
         KupacZaglavlje.create(kupac_id: @kupac.id, zaglavlje_id: @zaglavlje_id, oznaka_poreznog_broja: @oznaka_poreznog_broja)
       end
 
