@@ -32,7 +32,10 @@ class Kupac < ActiveRecord::Base
 
       isDuplicate, naziv_kupca = self.check_if_duplicates(kupac)
 
-      if naziv_kupca["0"] == nil
+      puts "Naziv kupca: "+naziv_kupca[0].to_s
+
+      if naziv_kupca[0] == nil
+        puts "Postavljam kupac_hash"
         kupac_hash = kupac_hash.merge(naziv_kupca)
       end
 
@@ -44,8 +47,8 @@ class Kupac < ActiveRecord::Base
 
     return "Ispravno", kupac_hash
 
-  rescue => e
-    return "Pogreška!\nPogreška se nalazi u redu broj #{@error_red} ili u zaglavlju!\nError message: #{e.message}", nil
+  #rescue => e
+  #  return "Pogreška!\nPogreška se nalazi u redu broj #{@error_red} ili u zaglavlju!\nError message: #{e.message}", nil
   end
 
   def self.open_spreadsheet(file)
@@ -62,10 +65,10 @@ class Kupac < ActiveRecord::Base
 
     if @kupac.nil?
       puts "Zapisujem kupca: "+_kupac.naziv_kupca
-      return false
+      return false, { 0 => "1"}
     else
       if @kupac.naziv_kupca == _kupac.naziv_kupca
-        return true, { 0 => "0"}
+        return true, { 0 => "1"}
       else
         puts "Nije isti!"
         return true, { @kupac.id => _kupac.naziv_kupca}
